@@ -1,1 +1,10 @@
-spring.application.name=groweasy-api
+server:
+  port: 8080
+
+spring:
+  application:
+    name: GROWEASY
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
