@@ -1,5 +1,11 @@
 package com.groweasy.groweasyapi.loginregister.handler;
 
+import com.groweasy.groweasyapi.loginregister.model.entities.PermissionEntity;
+import com.groweasy.groweasyapi.loginregister.model.entities.RoleEntity;
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
+import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
+import com.groweasy.groweasyapi.loginregister.repository.RoleRepository;
+import com.groweasy.groweasyapi.loginregister.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

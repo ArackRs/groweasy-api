@@ -1,4 +1,4 @@
-package com.groweasy.groweasyapi.loginregister.util;
+package com.groweasy.groweasyapi.loginregister.security.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

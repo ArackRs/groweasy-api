@@ -1,7 +1,7 @@
 package com.groweasy.groweasyapi.loginregister.security.config;
 
 import com.groweasy.groweasyapi.loginregister.security.filter.TokenSecurityFilter;
-import com.groweasy.groweasyapi.loginregister.util.TokenUtil;
+import com.groweasy.groweasyapi.loginregister.security.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

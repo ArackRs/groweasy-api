@@ -5,7 +5,7 @@ import com.groweasy.groweasyapi.loginregister.model.dto.request.SignupRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.AuthResponse;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
 import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
-import com.groweasy.groweasyapi.loginregister.util.TokenUtil;
+import com.groweasy.groweasyapi.loginregister.security.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

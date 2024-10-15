@@ -1,7 +1,7 @@
 package com.groweasy.groweasyapi.loginregister.security.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.groweasy.groweasyapi.loginregister.util.TokenUtil;
+import com.groweasy.groweasyapi.loginregister.security.util.TokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

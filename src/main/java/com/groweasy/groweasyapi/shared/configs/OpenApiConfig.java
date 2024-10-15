@@ -13,17 +13,12 @@ import org.springframework.http.HttpHeaders;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "Demo - Twitter API Backend",
+                title = "Demo - GrowEasy API Backend",
                 description = "This API provides endpoints for user authentication, post management, and following functionality, modeled after Twitter.",
-                termsOfService = "https://twitter.example.com/terms_and_conditions",
+                termsOfService = "https://groweasy.example.com/terms_and_conditions",
                 version = "1.0.0",
-                contact = @Contact(name = "Jack Arana Ramos", url = "https://website-arack.web.app/", email = "arack.rs@gmail.com"),
-                license = @License(name = "Standard Software Use License for TwitterAPI", url = "https://twitterapi.example.com/license")
+                license = @License(name = "Standard Software Use License for TwitterAPI", url = "https://groweasy.example.com/license")
         ),
-        servers = {
-                @Server(description = "Development Server", url = "http://localhost:8080"),
-                @Server(description = "Production Server", url = "https://twitter.azurewebsites.net")
-        },
         security = @SecurityRequirement(name = "Bearer Authentication")
 )
 @SecurityScheme(
