@@ -33,7 +33,7 @@ public class WebSecurityConfig {
 
     private final TokenUtil tokenUtil;
     private final UserDetailsService userDetailsService;
-    private static final String[] ALLOWED_ORIGIN = { "http://localhost:4200", "https://...web.app", "https://...firebaseapp.com" };
+    private static final String[] ALLOWED_ORIGIN = { "http://localhost:4200", "https://...web.app", "https://...firebaseapp.com", "https://wokwi.com"  };
     private static final String[] SWAGGER_UI_AUTH_WHITELIST = { "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html" };
     private static final String[] ENDPOINTS_ROL_INVITED = { "/api/v1/...", "/api/v1/..." };
 
@@ -53,7 +53,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(http -> {
                     // Public EndPoints
-                    http.requestMatchers("/h2-console/**").permitAll();
+                    http.requestMatchers("/h2-console/**", "/api/v1/devices/**").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll();
                     http.requestMatchers(HttpMethod.GET, SWAGGER_UI_AUTH_WHITELIST).permitAll();
                     http.requestMatchers(HttpMethod.GET, ENDPOINTS_ROL_INVITED).permitAll();

@@ -53,6 +53,7 @@ public class SeedingEventHandler {
 
         //USUARIO DE PRUEBA
         seedUsers(roleAdmin);
+        seedMetrics();
 
         log.info("Finished seeding roles and users for {} at {}", name, new Timestamp(System.currentTimeMillis()));
     }
@@ -69,4 +70,28 @@ public class SeedingEventHandler {
 
         userPersistence.save(user);
     }
+
+    private void seedMetrics() {
+
+//        Sensor sensor1 = Sensor.builder()
+//                .type(SensorType.TEMPERATURE)
+//                .location("string")
+//                .status(SensorStatus.OK)
+//                .build();
+//
+//        Sensor sensor2 = Sensor.builder()
+//                .type(SensorType.HUMIDITY)
+//                .location("string")
+//                .status(SensorStatus.OK)
+//                .build();
+//
+//        Sensor sensor3 = Sensor.builder()
+//                .type(SensorType.LIGHT)
+//                .location("string")
+//                .status(SensorStatus.OK)
+//                .build();
+//
+//        sensorRepository.saveAll(Set.of(sensor1, sensor2, sensor3));
+    }
+
 }
