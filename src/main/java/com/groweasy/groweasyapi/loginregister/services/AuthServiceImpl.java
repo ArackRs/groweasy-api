@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
 
         signupRequest = signupRequest.withPasswordEncoded(passwordEncoder.encode(password));
 
-        userService.createUser(signupRequest, RoleEnum.AMATEUR);
+        userService.createUser(signupRequest);
 
         Authentication authentication = this.authenticate(username, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);

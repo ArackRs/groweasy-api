@@ -1,5 +1,6 @@
 package com.groweasy.groweasyapi.notification.controllers;
 
+import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
 import com.groweasy.groweasyapi.loginregister.services.AuthService;
 import com.groweasy.groweasyapi.notification.model.entities.Notification;
 import com.groweasy.groweasyapi.notification.services.NotificationService;
@@ -21,12 +22,12 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
-    private final AuthService authService;
+    private final AuthenticationFacade authenticationFacade;
 
     // Endpoint para obtener las notificaciones del usuario autenticado
     @GetMapping
     public ResponseEntity<List<Notification>> getUserNotifications() {
-        Long userId = authService.getAuthenticatedUser().id();
+        Long userId = authenticationFacade.getCurrentUser().getId();
         List<Notification> notifications = notificationService.getUserNotifications(userId);
         return ResponseEntity.ok(notifications);
     }
@@ -34,7 +35,7 @@ public class NotificationController {
     // Endpoint para borrar todas las notificaciones del usuario autenticado
     @DeleteMapping
     public ResponseEntity<Void> clearUserNotifications() {
-        Long userId = authService.getAuthenticatedUser().id();
+        Long userId = authenticationFacade.getCurrentUser().getId();
         notificationService.clearUserNotifications(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

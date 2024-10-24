@@ -1,5 +1,6 @@
 package com.groweasy.groweasyapi.monitoring.services;
 
+import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.services.AuthService;
@@ -33,12 +34,12 @@ public class MonitoringService {
     private final DeviceConfigRepository deviceConfigRepository;
     private final SensorRepository sensorRepository;
     private final MetricRepository metricRepository;
-    private final AuthService authService;
+    private final AuthenticationFacade authenticationFacade;
     private final NotificationService notificationService;
 
     public void receiveData(DeviceDataRequest data) {
-        Long userId = authService.getAuthenticatedUser().id();
 
+        Long userId = authenticationFacade.getCurrentUser().getId();
         DeviceData deviceData = deviceDataRepository.findByUserId(userId)
                 .orElseGet(this::createDefaultData);
 
@@ -62,7 +63,7 @@ public class MonitoringService {
     }
 
     public DeviceDataResponse getData() {
-        Long userId = authService.getAuthenticatedUser().id();
+        Long userId = authenticationFacade.getCurrentUser().getId();
 
         DeviceData deviceData = deviceDataRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("No data found"));
@@ -72,7 +73,7 @@ public class MonitoringService {
 
     public DeviceConfigResponse getConfig() {
 
-        Long userId = authService.getAuthenticatedUser().id();
+        Long userId = authenticationFacade.getCurrentUser().getId();
 
         DeviceConfig config = deviceConfigRepository.findByUserId(userId)
                 .orElseGet(this::createDefaultConfig);
@@ -82,7 +83,7 @@ public class MonitoringService {
 
     public DeviceConfigResponse updateConfig(DeviceConfigRequest config) {
 
-        Long userId = authService.getAuthenticatedUser().id();
+        Long userId = authenticationFacade.getCurrentUser().getId();
 
         DeviceConfig deviceConfig = deviceConfigRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Config not found"));
@@ -123,13 +124,13 @@ public class MonitoringService {
 
     private DeviceConfig createDefaultConfig() {
 
-        UserEntity user = UserResponse.toEntity(authService.getAuthenticatedUser());
+        UserEntity user = authenticationFacade.getCurrentUser();
         return deviceConfigRepository.save(DeviceConfig.create(user));
     }
 
     private DeviceData createDefaultData() {
 
-        UserEntity user = UserResponse.toEntity(authService.getAuthenticatedUser());
+        UserEntity user = authenticationFacade.getCurrentUser();
         return deviceDataRepository.save(DeviceData.create(user));
     }
 }

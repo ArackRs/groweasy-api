@@ -1,6 +1,7 @@
 package com.groweasy.groweasyapi.loginregister.services;
 
 import com.groweasy.groweasyapi.loginregister.model.dto.request.SignupRequest;
+import com.groweasy.groweasyapi.loginregister.model.dto.request.UserRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
 import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public interface UserService extends UserDetailsService {
 
-    void createUser(SignupRequest signupRequest, RoleEnum role);
+    void createUser(SignupRequest signupRequest);
 
     /**
      * Retrieves a list of all users.
@@ -41,4 +42,6 @@ public interface UserService extends UserDetailsService {
      *
      */
     void deleteUser(Long userId);
+
+    void updateProfile(UserRequest request);
 }

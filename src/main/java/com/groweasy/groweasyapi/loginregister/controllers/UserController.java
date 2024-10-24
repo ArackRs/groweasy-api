@@ -1,5 +1,6 @@
 package com.groweasy.groweasyapi.loginregister.controllers;
 
+import com.groweasy.groweasyapi.loginregister.model.dto.request.UserRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
 import com.groweasy.groweasyapi.loginregister.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,13 +43,26 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
-    @PutMapping(value = "")
+    @PutMapping(value = "/username")
     @Operation(
             summary = "Update user details",
             description = "Updates an existing user's details"
     )
     public ResponseEntity<HashMap<String, String>> updateUsername(@RequestParam Long userId, @RequestParam String username) {
         userService.updateUsername(userId, username);
+        HashMap<String, String> response = new HashMap<>();
+        response.put("message", "User updated successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping(value = "/me")
+    @Operation(
+            summary = "Update own account",
+            description = "Allows a user to update their own account details"
+    )
+    public ResponseEntity<HashMap<String, String>> updateOwnAccount(@RequestBody UserRequest request) {
+        userService.updateProfile(request);
         HashMap<String, String> response = new HashMap<>();
         response.put("message", "User updated successfully");
 

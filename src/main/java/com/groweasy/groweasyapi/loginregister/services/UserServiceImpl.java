@@ -1,6 +1,8 @@
 package com.groweasy.groweasyapi.loginregister.services;
 
+import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
 import com.groweasy.groweasyapi.loginregister.model.dto.request.SignupRequest;
+import com.groweasy.groweasyapi.loginregister.model.dto.request.UserRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
 import com.groweasy.groweasyapi.loginregister.model.entities.RoleEntity;
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
@@ -28,29 +30,24 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository rolePersistence;
+    private final AuthenticationFacade authenticationFacade;
 
     @Override
-    public void createUser(SignupRequest signupRequest, RoleEnum role) {
-        RoleEntity roleUser = getRole(role);
+    public void createUser(SignupRequest signupRequest) {
+        RoleEntity roleUser = getRole(signupRequest.role());
 
         UserEntity user = UserEntity.builder()
+                .fullName(signupRequest.firstName() + " " + signupRequest.lastName())
                 .username(signupRequest.username())
                 .password(signupRequest.password())
                 .roles(Set.of(roleUser))
                 .build();
 
-//        user.setUserDetails(UserDetailsEntity.builder()
-//                .enabled(true)
-//                .accountNoExpired(true)
-//                .accountNoLocked(false)
-//                .credentialNoExpired(true)
-//                .build());
-
-        UserEntity userSaved = userRepository.save(user);
+        userRepository.save(user);
     }
 
-    private RoleEntity getRole(RoleEnum role) {
-        return rolePersistence.findByRoleName(role)
+    private RoleEntity getRole(String role) {
+        return rolePersistence.findByRoleName(RoleEnum.valueOf(role))
                 .orElseThrow(() -> new ResourceNotFoundException("Role not found"));
     }
 
@@ -91,6 +88,19 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found" + userId));
         userRepository.delete(userEntity);
+    }
+
+    @Override
+    public void updateProfile(UserRequest request) {
+
+        Long userId = authenticationFacade.getCurrentUser().getId();
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        userEntity.setFullName(request.fullName());
+        userEntity.setUsername(request.username());
+        userEntity.setPassword(request.password());
+        userRepository.save(userEntity);
     }
 
     @Override

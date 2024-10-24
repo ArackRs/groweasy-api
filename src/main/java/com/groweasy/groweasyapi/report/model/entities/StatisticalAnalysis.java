@@ -38,7 +38,10 @@ public class StatisticalAnalysis {
         String lightAnalysis = analyzeMetric(sensors, SensorType.LUMINOSITY);
         String periodAnalysis = analyzePeriod(sensors);
 
-        int count = sensors.size();
+        int count = sensors.stream()
+                .map(Sensor::getMetrics)
+                .mapToInt(List::size)
+                .sum() / 3;
 
         // Unificar el resultado
         this.result = String.format(
