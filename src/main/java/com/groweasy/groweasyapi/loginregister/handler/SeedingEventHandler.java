@@ -6,6 +6,10 @@ import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
 import com.groweasy.groweasyapi.loginregister.repository.RoleRepository;
 import com.groweasy.groweasyapi.loginregister.repository.UserRepository;
+import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
+import com.groweasy.groweasyapi.monitoring.model.enums.SensorStatus;
+import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
+import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -23,6 +27,7 @@ public class SeedingEventHandler {
     private final UserRepository userPersistence;
     private final RoleRepository rolePersistence;
     private final PasswordEncoder passwordEncoder;
+    private final SensorRepository sensorRepository;
 
     @EventListener
     public void on(ApplicationReadyEvent event) {

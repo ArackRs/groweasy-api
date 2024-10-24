@@ -98,9 +98,6 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findUserEntityByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("El usuario " + username + " no existe."));
 
-        log.info("userEntity username: {}", userEntity.getUsername());
-
-
         return new User(userEntity.getUsername(),
                 userEntity.getPassword(),
                 true,

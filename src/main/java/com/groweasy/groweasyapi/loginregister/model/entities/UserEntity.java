@@ -1,15 +1,14 @@
 package com.groweasy.groweasyapi.loginregister.model.entities;
 
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
+import com.groweasy.groweasyapi.report.model.entities.Report;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @AllArgsConstructor
@@ -37,11 +36,27 @@ public class UserEntity extends AbstractAggregateRoot<UserEntity> {
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles = new HashSet<>();
 
-    @CreatedDate
-    @Column(nullable = false, updatable = false)
-    protected Date createdAt;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<DeviceData> deviceDataList = new ArrayList<>();
 
-    @LastModifiedDate
-    @Column(nullable = false)
-    protected Date updatedAt;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private DeviceConfig deviceConfig;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Report report;
+
+    public void setDeviceConfig(DeviceConfig deviceConfig) {
+        this.deviceConfig = deviceConfig;
+        deviceConfig.setUser(this);
+    }
+
+    public void setReport(Report report) {
+        this.report = report;
+        report.setUser(this);
+    }
+
+    public void setDeviceDataList(List<DeviceData> deviceDataList) {
+        this.deviceDataList = deviceDataList;
+        deviceDataList.forEach(deviceData -> deviceData.setUser(this));
+    }
 }
