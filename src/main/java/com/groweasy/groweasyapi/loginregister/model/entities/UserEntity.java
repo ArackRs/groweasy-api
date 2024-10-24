@@ -1,13 +1,14 @@
 package com.groweasy.groweasyapi.loginregister.model.entities;
 
+import com.groweasy.groweasyapi.monitoring.model.entities.SensorConfig;
+import com.groweasy.groweasyapi.monitoring.model.entities.SensorData;
+import com.groweasy.groweasyapi.report.model.entities.Report;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.domain.AbstractAggregateRoot;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @AllArgsConstructor
@@ -36,8 +37,11 @@ public class UserEntity extends AbstractAggregateRoot<UserEntity> {
     private Set<RoleEntity> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Sensor> sensorList = new ArrayList<>();
+    private List<SensorData> sensorDataList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private SensorConfig sensorConfig;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Report report;
 }

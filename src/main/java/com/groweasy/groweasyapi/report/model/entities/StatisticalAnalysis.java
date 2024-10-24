@@ -32,7 +32,7 @@ public class StatisticalAnalysis {
 
         String temperatureAnalysis = analyzeMetric(metrics, SensorType.TEMPERATURE);
         String humidityAnalysis = analyzeMetric(metrics, SensorType.HUMIDITY);
-        String lightAnalysis = analyzeMetric(metrics, SensorType.LIGHT);
+        String lightAnalysis = analyzeMetric(metrics, SensorType.LUMINOSITY);
         String periodAnalysis = analyzePeriod(metrics);
 
         int count = metrics.size() / 3;

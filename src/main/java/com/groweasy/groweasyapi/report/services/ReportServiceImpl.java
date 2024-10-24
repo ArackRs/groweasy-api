@@ -1,8 +1,8 @@
 package com.groweasy.groweasyapi.report.services;
 
 import com.groweasy.groweasyapi.loginregister.services.AuthService;
-import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
-import com.groweasy.groweasyapi.monitoring.repository.DeviceDataRepository;
+import com.groweasy.groweasyapi.monitoring.model.entities.SensorData;
+import com.groweasy.groweasyapi.monitoring.repository.SensorDataRepository;
 import com.groweasy.groweasyapi.report.model.dto.ReportResponse;
 import com.groweasy.groweasyapi.report.model.entities.Report;
 import com.groweasy.groweasyapi.report.model.entities.StatisticalAnalysis;
@@ -23,17 +23,17 @@ public class ReportServiceImpl implements ReportService {
 
     private final AuthService authService;
     private final ReportRepository reportRepository;
-    private final DeviceDataRepository deviceDataRepository;
+    private final SensorDataRepository sensorDataRepository;
 
     @Override
     public ReportResponse generateReport() {
 
         Long userId = authService.getAuthenticatedUser().id();
-        Sensor sensor = deviceDataRepository.findByUserId(userId)
+        SensorData sensorData = sensorDataRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No data found for the user"));
 
         StatisticalAnalysis analysis = new StatisticalAnalysis();
-        analysis.performAnalysis(sensor.getMetrics());
+        analysis.performAnalysis(sensorData.getMetrics());
 
         Report report = reportRepository.findByUserId(userId)
                 .orElseGet(() -> Report.builder()
@@ -41,7 +41,7 @@ public class ReportServiceImpl implements ReportService {
                         .data(analysis.getResult())
                         .recommendation(RecommendationEnum.LOW)
                         .statisticalAnalysis(analysis)
-                        .user(sensor.getUser())
+                        .user(sensorData.getUser())
                         .build());
 
         Report newReport = updateReport(report, analysis);

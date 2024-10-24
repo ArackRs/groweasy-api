@@ -28,12 +28,22 @@ public class Metric {
     @Enumerated(EnumType.STRING)
     private SensorType type;
 
+    @ManyToOne
+    @JoinColumn(name = "device_data_id")
+    private SensorData sensorData;
+
     @Column
     private LocalDateTime timestamp = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "device_data_id")
-    private Sensor sensor;
+    public static Metric create(Double value, String unit, SensorType sensorType, SensorData sensorData) {
+        return Metric.builder()
+                .value(value)
+                .unit(unit)
+                .type(sensorType)
+                .sensorData(sensorData)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
 
     @PostLoad // Método que se ejecuta después de cargar la entidad
     public void init() {
