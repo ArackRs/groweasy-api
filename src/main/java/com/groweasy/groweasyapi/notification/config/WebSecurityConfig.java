@@ -1,4 +1,4 @@
-package com.groweasy.groweasyapi.monitoring.security.config;
+package com.groweasy.groweasyapi.notification.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

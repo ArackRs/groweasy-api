@@ -1,15 +1,31 @@
+package com.groweasy.groweasyapi.monitoring.controllers;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
+import com.groweasy.groweasyapi.monitoring.model.entities.SensorData;
+import com.groweasy.groweasyapi.monitoring.services.MonitoringService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-@ControllerAdvice
-public class ErrorHandler {
+import java.util.List;
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<String> handleAllExceptions(Exception ex, WebRequest request) {
-        return new ResponseEntity<>("Error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+@RestController
+@RequestMapping("/api/v1/monitoring")
+public class MonitoringController {
+
+    @Autowired
+    private MonitoringService monitoringService;
+
+    @GetMapping("/data")
+    public List<SensorData> getAllSensorData() {
+        return monitoringService.getAllSensorData();
+    }
+
+    @PostMapping("/data")
+    public SensorData addSensorData(@RequestBody SensorData sensorData) {
+        return monitoringService.saveSensorData(sensorData);
+    }
+
+    @GetMapping("/data/thresholds")
+    public String checkThresholds() {
+        return monitoringService.checkThresholds();
     }
 }

@@ -1,6 +1,6 @@
-package com.groweasy.monitoring.repositories;
+package com.groweasy.groweasyapi.monitoring.repository;
 
-import com.groweasy.monitoring.model.SensorData;
+import com.groweasy.groweasyapi.monitoring.model.entities.SensorData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

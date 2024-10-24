@@ -1,4 +1,4 @@
-package com.groweasy.groweasyapi.monitoring.handler;
+package com.groweasy.groweasyapi.notification.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

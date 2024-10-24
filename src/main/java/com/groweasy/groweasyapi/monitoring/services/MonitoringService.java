@@ -1,31 +1,48 @@
 package com.groweasy.groweasyapi.monitoring.services;
 
-import com.groweasy.groweasyapi.monitoring.model.dto.request.LoginRequest;
-import com.groweasy.groweasyapi.monitoring.model.dto.request.SignupRequest;
-import com.groweasy.groweasyapi.monitoring.model.dto.response.AuthResponse;
-import com.groweasy.groweasyapi.monitoring.model.dto.response.UserResponse;
+import com.groweasy.groweasyapi.monitoring.model.entities.SensorConfig;
+import com.groweasy.groweasyapi.monitoring.model.entities.SensorData;
+import com.groweasy.groweasyapi.monitoring.repository.SensorConfigRepository;
+import com.groweasy.groweasyapi.monitoring.repository.SensorDataRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-/**
- * Interface for authentication services, providing methods for user login and registration.
- */
-public interface MonitoringService {
-    /**
-     * Logs in a user with the provided credentials.
-     *
-     * @param loginRequest The login request containing user credentials.
-     * @return An {@link AuthResponse} object containing the authentication result.
-     */
-    AuthResponse login(LoginRequest loginRequest);
+import java.util.List;
 
-    /**
-     * Registers a new user with the specified details and password.
-     *
-     * @param signupRequest The {@link SignupRequest} object containing user details.
-     * @return An {@link AuthResponse} object containing the authentication result.
-     */
-    AuthResponse signup(SignupRequest signupRequest);
+@Service
+public class MonitoringService {
 
-    void logout();
+    @Autowired
+    private SensorDataRepository sensorDataRepository;
 
-    UserResponse getAuthenticatedUser();
+    @Autowired
+    private SensorConfigRepository sensorConfigRepository;
+
+    public List<SensorData> getAllSensorData() {
+        return sensorDataRepository.findAll();
+    }
+
+    public SensorData saveSensorData(SensorData sensorData) {
+        return sensorDataRepository.save(sensorData);
+    }
+
+    public String checkThresholds() {
+        List<SensorData> sensorDataList = sensorDataRepository.findAll();
+        StringBuilder alertas = new StringBuilder();
+
+        for (SensorData sensorData : sensorDataList) {
+            SensorConfig config = sensorConfigRepository.findBySensorType(sensorData.getSensorType().toLowerCase());
+            if (config == null) {
+                alertas.append("ALERTA: ¡No se encontró configuración para el tipo de sensor!\n");
+                continue;
+            }
+
+            if (sensorData.getValue() > config.getMaxThreshold()) {
+                alertas.append("ALERTA: ¡" + sensorData.getSensorType() + " excede el umbral máximo!\n");
+            } else if (sensorData.getValue() < config.getMinThreshold()) {
+                alertas.append("ALERTA: ¡" + sensorData.getSensorType() + " está por debajo del umbral mínimo!\n");
+            }
+        }
+        return alertas.toString().isEmpty() ? "Todos los valores de los sensores están dentro del rango normal." : alertas.toString();
+    }
 }
