@@ -1,7 +1,7 @@
 package com.groweasy.groweasyapi.loginregister.model.entities;
 
-import com.groweasy.groweasyapi.monitoring.model.entities.SensorConfig;
-import com.groweasy.groweasyapi.monitoring.model.entities.SensorData;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
 import com.groweasy.groweasyapi.report.model.entities.Report;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,11 +37,26 @@ public class UserEntity extends AbstractAggregateRoot<UserEntity> {
     private Set<RoleEntity> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<SensorData> sensorDataList = new ArrayList<>();
+    private List<DeviceData> deviceDataList = new ArrayList<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private SensorConfig sensorConfig;
+    private DeviceConfig deviceConfig;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Report report;
+
+    public void setDeviceConfig(DeviceConfig deviceConfig) {
+        this.deviceConfig = deviceConfig;
+        deviceConfig.setUser(this);
+    }
+
+    public void setReport(Report report) {
+        this.report = report;
+        report.setUser(this);
+    }
+
+    public void setDeviceDataList(List<DeviceData> deviceDataList) {
+        this.deviceDataList = deviceDataList;
+        deviceDataList.forEach(deviceData -> deviceData.setUser(this));
+    }
 }

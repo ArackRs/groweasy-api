@@ -1,6 +1,6 @@
 package com.groweasy.groweasyapi.monitoring.model.entities;
 
-import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @Table
 public class Metric {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,30 +26,18 @@ public class Metric {
     private String unit;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private SensorType type;
-
-    @ManyToOne
-    @JoinColumn(name = "device_data_id")
-    private SensorData sensorData;
-
-    @Column
     private LocalDateTime timestamp = LocalDateTime.now();
 
-    public static Metric create(Double value, String unit, SensorType sensorType, SensorData sensorData) {
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Sensor sensor;
+
+    public static Metric create(Double value, String unit, Sensor sensor) {
         return Metric.builder()
                 .value(value)
                 .unit(unit)
-                .type(sensorType)
-                .sensorData(sensorData)
                 .timestamp(LocalDateTime.now())
+                .sensor(sensor)
                 .build();
-    }
-
-    @PostLoad // Método que se ejecuta después de cargar la entidad
-    public void init() {
-        if (this.timestamp == null) {
-            this.timestamp = LocalDateTime.now();
-        }
     }
 }

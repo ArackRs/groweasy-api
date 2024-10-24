@@ -1,6 +1,6 @@
 package com.groweasy.groweasyapi.monitoring.model.dto.response;
 
-import com.groweasy.groweasyapi.monitoring.model.entities.SensorConfig;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
 
 public record DeviceConfigResponse(
         Long id,
@@ -15,7 +15,7 @@ public record DeviceConfigResponse(
         int lumMax,
         int lumThreshold
 ) {
-    public static DeviceConfigResponse fromEntity(SensorConfig entity) {
+    public static DeviceConfigResponse fromEntity(DeviceConfig entity) {
         return new DeviceConfigResponse(
                 entity.getId(),
                 entity.getSampleInterval(),

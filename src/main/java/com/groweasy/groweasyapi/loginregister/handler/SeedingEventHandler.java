@@ -6,6 +6,10 @@ import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
 import com.groweasy.groweasyapi.loginregister.repository.RoleRepository;
 import com.groweasy.groweasyapi.loginregister.repository.UserRepository;
+import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
+import com.groweasy.groweasyapi.monitoring.model.enums.SensorStatus;
+import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
+import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -23,6 +27,7 @@ public class SeedingEventHandler {
     private final UserRepository userPersistence;
     private final RoleRepository rolePersistence;
     private final PasswordEncoder passwordEncoder;
+    private final SensorRepository sensorRepository;
 
     @EventListener
     public void on(ApplicationReadyEvent event) {
@@ -53,7 +58,6 @@ public class SeedingEventHandler {
 
         //USUARIO DE PRUEBA
         seedUsers(roleAdmin);
-        seedMetrics();
 
         log.info("Finished seeding roles and users for {} at {}", name, new Timestamp(System.currentTimeMillis()));
     }
@@ -70,28 +74,4 @@ public class SeedingEventHandler {
 
         userPersistence.save(user);
     }
-
-    private void seedMetrics() {
-
-//        Sensor sensor1 = Sensor.builder()
-//                .type(SensorType.TEMPERATURE)
-//                .location("string")
-//                .status(SensorStatus.OK)
-//                .build();
-//
-//        Sensor sensor2 = Sensor.builder()
-//                .type(SensorType.HUMIDITY)
-//                .location("string")
-//                .status(SensorStatus.OK)
-//                .build();
-//
-//        Sensor sensor3 = Sensor.builder()
-//                .type(SensorType.LIGHT)
-//                .location("string")
-//                .status(SensorStatus.OK)
-//                .build();
-//
-//        sensorRepository.saveAll(Set.of(sensor1, sensor2, sensor3));
-    }
-
 }

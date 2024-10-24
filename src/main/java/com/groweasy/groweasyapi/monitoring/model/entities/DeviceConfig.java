@@ -12,7 +12,7 @@ import lombok.*;
 @Getter
 @Setter
 @Table
-public class SensorConfig {
+public class DeviceConfig {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,9 +42,9 @@ public class SensorConfig {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    public static SensorConfig createDefaultConfig(UserEntity user) {
+    public static DeviceConfig create(UserEntity user) {
 
-        return SensorConfig.builder()
+        return DeviceConfig.builder()
                 .sampleInterval(10)
                 .tempMin(15.0)
                 .tempMax(30.0)

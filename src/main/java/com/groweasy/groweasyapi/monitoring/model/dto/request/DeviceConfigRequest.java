@@ -1,6 +1,6 @@
 package com.groweasy.groweasyapi.monitoring.model.dto.request;
 
-import com.groweasy.groweasyapi.monitoring.model.entities.SensorConfig;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
 
 public record DeviceConfigRequest(
         int sampleInterval,
@@ -15,8 +15,8 @@ public record DeviceConfigRequest(
         int lumThreshold
 ) {
     // Mappear de DTO a entidad
-    public SensorConfig toEntity() {
-        return SensorConfig.builder()
+    public DeviceConfig toEntity() {
+        return DeviceConfig.builder()
                 .sampleInterval(sampleInterval)
                 .tempMin(tempMin)
                 .tempMax(tempMax)

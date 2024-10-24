@@ -1,11 +1,21 @@
 package com.groweasy.groweasyapi.monitoring.model.dto.response;
 
-import java.time.LocalDateTime;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
+
+import java.util.List;
 
 public record DeviceDataResponse(
         Long id,
-        Double temperature,
-        Double humidity,
-        Double luminosity,
-        LocalDateTime timestamp) {
+        String status,
+        String location,
+        List<SensorResponse> sensors
+) {
+    public static DeviceDataResponse fromEntity(DeviceData deviceData) {
+        return new DeviceDataResponse(
+                deviceData.getId(),
+                deviceData.getStatus().name(),
+                deviceData.getLocation(),
+                SensorResponse.fromEntityList(deviceData.getSensors())
+        );
+    }
 }

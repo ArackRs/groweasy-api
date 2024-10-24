@@ -1,8 +1,10 @@
 package com.groweasy.groweasyapi.report.services;
 
 import com.groweasy.groweasyapi.loginregister.services.AuthService;
-import com.groweasy.groweasyapi.monitoring.model.entities.SensorData;
-import com.groweasy.groweasyapi.monitoring.repository.SensorDataRepository;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
+import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
+import com.groweasy.groweasyapi.monitoring.repository.DeviceDataRepository;
+import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import com.groweasy.groweasyapi.report.model.dto.ReportResponse;
 import com.groweasy.groweasyapi.report.model.entities.Report;
 import com.groweasy.groweasyapi.report.model.entities.StatisticalAnalysis;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -23,17 +26,20 @@ public class ReportServiceImpl implements ReportService {
 
     private final AuthService authService;
     private final ReportRepository reportRepository;
-    private final SensorDataRepository sensorDataRepository;
+    private final DeviceDataRepository deviceDataRepository;
+    private final SensorRepository sensorRepository;
 
     @Override
     public ReportResponse generateReport() {
 
         Long userId = authService.getAuthenticatedUser().id();
-        SensorData sensorData = sensorDataRepository.findByUserId(userId)
+        DeviceData deviceData = deviceDataRepository.findSensorByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No data found for the user"));
 
+        List<Sensor> sensors = sensorRepository.findAllByDeviceDataId(deviceData.getId());
+
         StatisticalAnalysis analysis = new StatisticalAnalysis();
-        analysis.performAnalysis(sensorData.getMetrics());
+        analysis.performAnalysis(sensors);
 
         Report report = reportRepository.findByUserId(userId)
                 .orElseGet(() -> Report.builder()
@@ -41,7 +47,7 @@ public class ReportServiceImpl implements ReportService {
                         .data(analysis.getResult())
                         .recommendation(RecommendationEnum.LOW)
                         .statisticalAnalysis(analysis)
-                        .user(sensorData.getUser())
+                        .user(deviceData.getUser())
                         .build());
 
         Report newReport = updateReport(report, analysis);

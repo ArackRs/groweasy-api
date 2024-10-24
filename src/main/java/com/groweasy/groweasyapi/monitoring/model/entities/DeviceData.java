@@ -15,31 +15,29 @@ import java.util.List;
 @Getter
 @Setter
 @Table
-public class SensorData {
+public class DeviceData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String location;
-
-//    private SensorType type;
-
     private SensorStatus status;
 
-    @OneToMany(mappedBy = "sensorData", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Metric> metrics = new ArrayList<>();
+    private String location;
+
+    @OneToMany(mappedBy = "deviceData", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Sensor> sensors = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    public static SensorData create(Long userId) {
+    public static DeviceData create(UserEntity user) {
 
-        return SensorData.builder()
+        return DeviceData.builder()
                 .location("Living Room")
                 .status(SensorStatus.OK)
-                .user(UserEntity.builder().id(userId).build())
+                .user(user)
                 .build();
     }
 }
