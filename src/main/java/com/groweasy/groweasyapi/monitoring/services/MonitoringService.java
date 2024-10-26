@@ -1,13 +1,12 @@
 package com.groweasy.groweasyapi.monitoring.services;
 
 import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
-import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
-import com.groweasy.groweasyapi.loginregister.services.AuthService;
 import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceConfigRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceDataRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceConfigResponse;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceDataResponse;
+import com.groweasy.groweasyapi.monitoring.model.dto.response.MetricResponse;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
 import com.groweasy.groweasyapi.monitoring.model.entities.Metric;
@@ -132,5 +131,12 @@ public class MonitoringService {
 
         UserEntity user = authenticationFacade.getCurrentUser();
         return deviceDataRepository.save(DeviceData.create(user));
+    }
+
+    public List<MetricResponse> getMetrics() {
+
+            List<Metric> metrics = metricRepository.findAll();
+
+            return MetricResponse.fromEntityList(metrics);
     }
 }
