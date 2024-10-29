@@ -1,7 +1,7 @@
 package com.groweasy.groweasyapi.monitoring.model.entities;
 
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
-import com.groweasy.groweasyapi.monitoring.model.enums.SensorStatus;
+import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -22,9 +22,9 @@ public class DeviceData {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name;
+    private String serialNumber;
 
-    private SensorStatus status;
+    private DeviceStatus status;
 
     private String location;
 
@@ -41,9 +41,9 @@ public class DeviceData {
     public static DeviceData create(String name, UserEntity user) {
 
         return DeviceData.builder()
-                .name(name)
+                .serialNumber(name)
                 .location("Living Room")
-                .status(SensorStatus.OK)
+                .status(DeviceStatus.ACTIVE)
                 .user(user)
                 .build();
     }

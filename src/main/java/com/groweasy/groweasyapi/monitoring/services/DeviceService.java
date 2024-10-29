@@ -29,12 +29,12 @@ public class DeviceService {
     private final MetricRepository metricRepository;
     private final AuthenticationFacade authenticationFacade;
 
-    public void registerDevice(String deviceName) {
+    public void registerDevice(String serialNumber) {
 
         UserEntity user = authenticationFacade.getCurrentUser();
 
-        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
-                .orElseGet(() -> createDefaultData(deviceName, user));
+        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
+                .orElseGet(() -> createDefaultData(serialNumber, user));
 
         deviceDataRepository.save(deviceData);
 
@@ -44,21 +44,9 @@ public class DeviceService {
         deviceConfigRepository.save(config);
     }
 
-    public DeviceDataResponse getData(String deviceName) {
-//        Long userId = authenticationFacade.getCurrentUser().getId();
+    public DeviceConfigResponse updateConfig(String serialNumber, DeviceConfigRequest config) {
 
-        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
-                .orElseThrow(() -> new RuntimeException("No data found"));
-
-        return DeviceDataResponse.fromEntity(deviceData);
-    }
-
-    public DeviceConfigResponse updateConfig(String deviceName, DeviceConfigRequest config) {
-
-//        Long userId = authenticationFacade.getCurrentUser().getId();
-
-        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
-                .orElseThrow(() -> new RuntimeException("Device not found"));
+        DeviceData deviceData = getDeviceBySerialNumber(serialNumber);
 
         DeviceConfig deviceConfig = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
                 .orElseThrow(() -> new RuntimeException("Config not found"));
@@ -70,9 +58,9 @@ public class DeviceService {
         return DeviceConfigResponse.fromEntity(newConfig);
     }
 
-    public List<MetricResponse> getMetrics(String deviceName) {
+    public List<MetricResponse> getMetrics(String serialNumber) {
 
-        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
+        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
 
         List<Sensor> sensors = deviceData.getSensors();
@@ -84,9 +72,19 @@ public class DeviceService {
         return MetricResponse.fromEntityList(metrics);
     }
 
-    private DeviceData createDefaultData(String deviceName, UserEntity user) {
+    public DeviceData getDeviceBySerialNumber(String serialNumber) {
 
-        return deviceDataRepository.save(DeviceData.create(deviceName, user));
+        return deviceDataRepository.findBySerialNumber(serialNumber)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
+    }
+
+    public List<DeviceData> getAllDevices() {
+        return deviceDataRepository.findAll();
+    }
+
+    private DeviceData createDefaultData(String serialNumber, UserEntity user) {
+
+        return deviceDataRepository.save(DeviceData.create(serialNumber, user));
     }
 
     private DeviceConfig createDefaultConfig(DeviceData deviceData) {

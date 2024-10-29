@@ -19,20 +19,20 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
-//    private final AuthenticationFacade authenticationFacade;
+    private final AuthenticationFacade authenticationFacade;
 
     // Endpoint para obtener las notificaciones del usuario autenticado
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Notification>> getUserNotifications(@PathVariable Long userId) {
-//        Long userId = authenticationFacade.getCurrentUser().getId();
+    @GetMapping()
+    public ResponseEntity<List<Notification>> getUserNotifications() {
+        Long userId = authenticationFacade.getCurrentUser().getId();
         List<Notification> notifications = notificationService.getUserNotifications(userId);
         return ResponseEntity.ok(notifications);
     }
 
     // Endpoint para borrar todas las notificaciones del usuario autenticado
-    @DeleteMapping("/user/{userId}")
-    public ResponseEntity<Void> clearUserNotifications(@PathVariable Long userId) {
-//        Long userId = authenticationFacade.getCurrentUser().getId();
+    @DeleteMapping()
+    public ResponseEntity<Void> clearUserNotifications() {
+        Long userId = authenticationFacade.getCurrentUser().getId();
         notificationService.clearUserNotifications(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

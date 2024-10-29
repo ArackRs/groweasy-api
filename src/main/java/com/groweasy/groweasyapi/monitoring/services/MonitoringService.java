@@ -32,11 +32,9 @@ public class MonitoringService {
     private final MetricRepository metricRepository;
     private final NotificationService notificationService;
 
-    public void receiveData(String deviceName, DeviceDataRequest data) {
+    public void receiveData(String serialNumber, DeviceDataRequest data) {
 
-//        UserEntity user = authenticationFacade.getCurrentUser();
-
-        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
+        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
 
         Sensor temSensor = sensorRepository.findByTypeAndDeviceDataId(SensorType.TEMPERATURE, deviceData.getId())
@@ -55,14 +53,12 @@ public class MonitoringService {
         metricRepository.saveAll(List.of(temMetric, humMetric, lumMetric));
 
         // Verifica los umbrales después de guardar los datos
-        checkThresholds(data.temperature(), data.humidity(), data.luminosity(), deviceName);
+        checkThresholds(data.temperature(), data.humidity(), data.luminosity(), serialNumber);
     }
 
-    public DeviceConfigResponse getConfig(String deviceName) {
+    public DeviceConfigResponse getConfig(String serialNumber) {
 
-//        Long userId = authenticationFacade.getCurrentUser().getId();
-
-        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
+        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
 
         DeviceConfig config = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
@@ -71,9 +67,9 @@ public class MonitoringService {
         return DeviceConfigResponse.fromEntity(config);
     }
 
-    private void checkThresholds(Double temperature, Double humidity, Double luminosity, String deviceName) {
+    private void checkThresholds(Double temperature, Double humidity, Double luminosity, String serialNumber) {
 
-        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
+        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
 
         DeviceConfig config = deviceConfigRepository.findByDeviceDataId(deviceData.getId())

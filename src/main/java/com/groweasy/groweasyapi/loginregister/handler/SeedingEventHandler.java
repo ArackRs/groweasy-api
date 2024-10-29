@@ -8,12 +8,9 @@ import com.groweasy.groweasyapi.loginregister.repository.RoleRepository;
 import com.groweasy.groweasyapi.loginregister.repository.UserRepository;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
-import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
-import com.groweasy.groweasyapi.monitoring.model.enums.SensorStatus;
-import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
+import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceConfigRepository;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceDataRepository;
-import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -85,9 +82,9 @@ public class SeedingEventHandler {
     private void seedDevice(UserEntity user) {
 
         DeviceData deviceData = DeviceData.builder()
-                .name("GE001")
+                .serialNumber("device-ge001")
                 .location("Living Room")
-                .status(SensorStatus.OK)
+                .status(DeviceStatus.ACTIVE)
                 .user(user)
                 .build();
 

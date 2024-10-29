@@ -21,26 +21,35 @@ public class DeviceController {
 
     private final DeviceService deviceService;
 
-    @PostMapping("/{deviceName}")
-    public ResponseEntity<Void> registerDevice(@PathVariable String deviceName) {
-        deviceService.registerDevice(deviceName);
+    @PostMapping
+    public ResponseEntity<Void> registerDevice(@RequestParam String serialNumber) {
+        deviceService.registerDevice(serialNumber);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/{deviceName}/config")
-    public ResponseEntity<DeviceConfigResponse> updateConfig(@PathVariable String deviceName, @RequestBody DeviceConfigRequest config) {
+    @PutMapping("/{serialNumber}/config")
+    public ResponseEntity<DeviceConfigResponse> updateConfig(@PathVariable String serialNumber, @RequestBody DeviceConfigRequest config) {
 
-        DeviceConfigResponse response = deviceService.updateConfig(deviceName, config);
+        DeviceConfigResponse response = deviceService.updateConfig(serialNumber, config);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{deviceName}")
-    public ResponseEntity<DeviceDataResponse> getData(@PathVariable String deviceName) {
-        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getData(deviceName));
+    @GetMapping("/{serialNumber}")
+    public ResponseEntity<DeviceDataResponse> getDevice(@PathVariable String serialNumber) {
+
+        DeviceDataResponse response = DeviceDataResponse.fromEntity(deviceService.getDeviceBySerialNumber(serialNumber));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{deviceName}/metrics")
-    public ResponseEntity<List<MetricResponse>> getMetrics(@PathVariable String deviceName) {
-        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getMetrics(deviceName));
+    @GetMapping("/{serialNumber}/metrics")
+    public ResponseEntity<List<MetricResponse>> getMetrics(@PathVariable String serialNumber) {
+        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getMetrics(serialNumber));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<DeviceDataResponse>> getAllDevices() {
+
+        List<DeviceDataResponse> devices = DeviceDataResponse.fromEntityList(deviceService.getAllDevices());
+        return ResponseEntity.status(HttpStatus.OK).body(devices);
     }
 }

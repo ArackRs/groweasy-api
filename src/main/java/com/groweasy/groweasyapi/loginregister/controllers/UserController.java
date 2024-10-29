@@ -1,5 +1,6 @@
 package com.groweasy.groweasyapi.loginregister.controllers;
 
+import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
 import com.groweasy.groweasyapi.loginregister.model.dto.request.UserRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
@@ -21,6 +22,7 @@ import java.util.List;
 @Tag(name = "User Controller", description = "API for user operations")
 public class UserController {
     private final UserService userService;
+    private final AuthenticationFacade authenticationFacade;
 
     @GetMapping(value = "")
     @Operation(
@@ -46,10 +48,13 @@ public class UserController {
 
     @PutMapping(value = "/username")
     @Operation(
-            summary = "Update user details",
+            summary = "Update username",
             description = "Updates an existing user's details"
     )
-    public ResponseEntity<HashMap<String, String>> updateUsername(@RequestParam Long userId, @RequestParam String username) {
+    public ResponseEntity<HashMap<String, String>> updateUsername(@RequestParam String username) {
+
+        Long userId = authenticationFacade.getCurrentUser().getId();
+
         userService.updateUsername(userId, username);
         HashMap<String, String> response = new HashMap<>();
         response.put("message", "User updated successfully");
@@ -57,12 +62,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping(value = "/{userId}")
+    @PutMapping(value = "/me")
     @Operation(
             summary = "Update own account",
             description = "Allows a user to update their own account details"
     )
-    public ResponseEntity<HashMap<String, String>> updateOwnAccount(@PathVariable Long userId, @RequestBody UserRequest request) {
+    public ResponseEntity<HashMap<String, String>> updateOwnAccount(@RequestBody UserRequest request) {
+
+        Long userId = authenticationFacade.getCurrentUser().getId();
+
         userService.updateProfile(userId, request);
         HashMap<String, String> response = new HashMap<>();
         response.put("message", "User updated successfully");
@@ -70,7 +78,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/account")
+    @DeleteMapping("/me")
     @Operation(
             summary = "Delete own account",
             description = "Allows a user to delete their own account"
