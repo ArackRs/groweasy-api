@@ -8,5 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface DeviceConfigRepository extends JpaRepository<DeviceConfig, Long> {
-    Optional<DeviceConfig> findByUserId(Long userId);
+//    Optional<DeviceConfig> findByUserId(Long userId);
+
+    Optional<DeviceConfig> findByDeviceDataId(Long id);
 }

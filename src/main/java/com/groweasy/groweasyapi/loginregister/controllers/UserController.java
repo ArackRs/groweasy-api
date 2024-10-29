@@ -2,6 +2,7 @@ package com.groweasy.groweasyapi.loginregister.controllers;
 
 import com.groweasy.groweasyapi.loginregister.model.dto.request.UserRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,8 +40,8 @@ public class UserController {
     )
     public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username) {
 
-        UserResponse userResponse = userService.getUserByUsername(username);
-        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        UserEntity user = userService.getUserByUsername(username);
+        return ResponseEntity.status(HttpStatus.OK).body(UserResponse.fromEntity(user));
     }
 
     @PutMapping(value = "/username")
@@ -56,13 +57,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping(value = "/me")
+    @PutMapping(value = "/{userId}")
     @Operation(
             summary = "Update own account",
             description = "Allows a user to update their own account details"
     )
-    public ResponseEntity<HashMap<String, String>> updateOwnAccount(@RequestBody UserRequest request) {
-        userService.updateProfile(request);
+    public ResponseEntity<HashMap<String, String>> updateOwnAccount(@PathVariable Long userId, @RequestBody UserRequest request) {
+        userService.updateProfile(userId, request);
         HashMap<String, String> response = new HashMap<>();
         response.put("message", "User updated successfully");
 

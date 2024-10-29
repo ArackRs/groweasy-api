@@ -4,6 +4,7 @@ import com.groweasy.groweasyapi.loginregister.model.dto.request.LoginRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.request.SignupRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.AuthResponse;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 
 /**
  * Interface for authentication services, providing methods for user login and registration.
@@ -27,5 +28,5 @@ public interface AuthService {
 
     void logout();
 
-    UserResponse getAuthenticatedUser();
+    UserEntity getAuthenticatedUser();
 }

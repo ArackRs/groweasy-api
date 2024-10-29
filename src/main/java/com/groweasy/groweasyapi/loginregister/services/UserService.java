@@ -3,6 +3,7 @@ package com.groweasy.groweasyapi.loginregister.services;
 import com.groweasy.groweasyapi.loginregister.model.dto.request.SignupRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.request.UserRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -28,7 +29,7 @@ public interface UserService extends UserDetailsService {
      * @param username The username of the user to be retrieved.
      * @return A {@link UserResponse} object representing the user with the specified username.
      */
-    UserResponse getUserByUsername(String username);
+    UserEntity getUserByUsername(String username);
 
     /**
      * Updates the information of a user identified by their username.
@@ -43,5 +44,5 @@ public interface UserService extends UserDetailsService {
      */
     void deleteUser(Long userId);
 
-    void updateProfile(UserRequest request);
+    void updateProfile(Long userId, UserRequest request);
 }

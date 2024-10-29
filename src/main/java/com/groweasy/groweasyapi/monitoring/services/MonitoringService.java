@@ -1,12 +1,9 @@
 package com.groweasy.groweasyapi.monitoring.services;
 
 import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
-import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
-import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceConfigRequest;
+import com.groweasy.groweasyapi.loginregister.services.UserService;
 import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceDataRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceConfigResponse;
-import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceDataResponse;
-import com.groweasy.groweasyapi.monitoring.model.dto.response.MetricResponse;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
 import com.groweasy.groweasyapi.monitoring.model.entities.Metric;
@@ -35,12 +32,14 @@ public class MonitoringService {
     private final MetricRepository metricRepository;
     private final AuthenticationFacade authenticationFacade;
     private final NotificationService notificationService;
+    private final UserService userService;
 
-    public void receiveData(DeviceDataRequest data) {
+    public void receiveData(String deviceName, DeviceDataRequest data) {
 
-        Long userId = authenticationFacade.getCurrentUser().getId();
-        DeviceData deviceData = deviceDataRepository.findByUserId(userId)
-                .orElseGet(this::createDefaultData);
+//        UserEntity user = authenticationFacade.getCurrentUser();
+
+        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
 
         Sensor temSensor = sensorRepository.findByTypeAndDeviceDataId(SensorType.TEMPERATURE, deviceData.getId())
                 .orElseGet(() -> Sensor.create(SensorType.TEMPERATURE, deviceData));
@@ -58,46 +57,31 @@ public class MonitoringService {
         metricRepository.saveAll(List.of(temMetric, humMetric, lumMetric));
 
         // Verifica los umbrales después de guardar los datos
-        checkThresholds(data.temperature(), data.humidity(), data.luminosity(), userId);
+        checkThresholds(data.temperature(), data.humidity(), data.luminosity(), deviceName);
     }
 
-    public DeviceDataResponse getData() {
-        Long userId = authenticationFacade.getCurrentUser().getId();
+    public DeviceConfigResponse getConfig(String deviceName) {
 
-        DeviceData deviceData = deviceDataRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("No data found"));
+//        Long userId = authenticationFacade.getCurrentUser().getId();
 
-        return DeviceDataResponse.fromEntity(deviceData);
-    }
+        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
 
-    public DeviceConfigResponse getConfig() {
-
-        Long userId = authenticationFacade.getCurrentUser().getId();
-
-        DeviceConfig config = deviceConfigRepository.findByUserId(userId)
-                .orElseGet(this::createDefaultConfig);
+        DeviceConfig config = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
+                .orElseThrow(() -> new RuntimeException("Config not found"));
 
         return DeviceConfigResponse.fromEntity(config);
     }
 
-    public DeviceConfigResponse updateConfig(DeviceConfigRequest config) {
+    private void checkThresholds(Double temperature, Double humidity, Double luminosity, String deviceName) {
 
-        Long userId = authenticationFacade.getCurrentUser().getId();
+        DeviceData deviceData = deviceDataRepository.findByName(deviceName)
+                .orElseThrow(() -> new RuntimeException("Device not found"));
 
-        DeviceConfig deviceConfig = deviceConfigRepository.findByUserId(userId)
+        DeviceConfig config = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
                 .orElseThrow(() -> new RuntimeException("Config not found"));
 
-        deviceConfig.update(config);
-
-        DeviceConfig newConfig = deviceConfigRepository.save(deviceConfig);
-
-        return DeviceConfigResponse.fromEntity(newConfig);
-    }
-
-    private void checkThresholds(Double temperature, Double humidity, Double luminosity, Long userId) {
-
-        DeviceConfig config = deviceConfigRepository.findByUserId(userId)
-                .orElseGet(this::createDefaultConfig);
+        Long userId = deviceData.getUser().getId();
 
         // Comprobación de umbrales de temperatura
         if (temperature < config.getTempMin() || temperature > config.getTempMax()) {
@@ -121,22 +105,4 @@ public class MonitoringService {
         }
     }
 
-    private DeviceConfig createDefaultConfig() {
-
-        UserEntity user = authenticationFacade.getCurrentUser();
-        return deviceConfigRepository.save(DeviceConfig.create(user));
-    }
-
-    private DeviceData createDefaultData() {
-
-        UserEntity user = authenticationFacade.getCurrentUser();
-        return deviceDataRepository.save(DeviceData.create(user));
-    }
-
-    public List<MetricResponse> getMetrics() {
-
-            List<Metric> metrics = metricRepository.findAll();
-
-            return MetricResponse.fromEntityList(metrics);
-    }
 }

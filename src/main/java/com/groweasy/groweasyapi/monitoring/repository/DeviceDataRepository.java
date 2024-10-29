@@ -16,4 +16,6 @@ public interface DeviceDataRepository extends JpaRepository<DeviceData, Long> {
     Optional<DeviceData> findByUserId(Long userId);
 
     Optional<DeviceData> findSensorByUserId(Long userId);
+
+    Optional<DeviceData> findByName(String name);
 }

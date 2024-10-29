@@ -4,6 +4,7 @@ import com.groweasy.groweasyapi.loginregister.model.dto.request.LoginRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.request.SignupRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.AuthResponse;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
 import com.groweasy.groweasyapi.loginregister.security.util.TokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -62,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserResponse getAuthenticatedUser() {
+    public UserEntity getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()
