@@ -1,5 +1,6 @@
 package com.groweasy.groweasyapi.report.services;
 
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.services.AuthService;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
 import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
@@ -32,8 +33,8 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public ReportResponse generateReport() {
 
-        Long userId = authService.getAuthenticatedUser().id();
-        DeviceData deviceData = deviceDataRepository.findSensorByUserId(userId)
+        UserEntity user = authService.getAuthenticatedUser();
+        DeviceData deviceData = deviceDataRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No data found for the user"));
 
         List<Sensor> sensors = sensorRepository.findAllByDeviceDataId(deviceData.getId());
@@ -41,13 +42,13 @@ public class ReportServiceImpl implements ReportService {
         StatisticalAnalysis analysis = new StatisticalAnalysis();
         analysis.performAnalysis(sensors);
 
-        Report report = reportRepository.findByUserId(userId)
+        Report report = reportRepository.findByUserId(user.getId())
                 .orElseGet(() -> Report.builder()
                         .generationDate(LocalDate.now())
                         .data(analysis.getResult())
                         .recommendation(RecommendationEnum.LOW)
                         .statisticalAnalysis(analysis)
-                        .user(deviceData.getUser())
+                        .user(user)
                         .build());
 
         Report newReport = updateReport(report, analysis);

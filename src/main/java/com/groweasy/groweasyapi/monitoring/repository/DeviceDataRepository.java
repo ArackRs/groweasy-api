@@ -11,9 +11,7 @@ import java.util.Optional;
 @Repository
 public interface DeviceDataRepository extends JpaRepository<DeviceData, Long> {
 
-    List<DeviceData> findAllByUserId(Long userId);
-
     Optional<DeviceData> findByUserId(Long userId);
 
-    Optional<DeviceData> findSensorByUserId(Long userId);
+    Optional<DeviceData> findBySerialNumber(String serialNumber);
 }

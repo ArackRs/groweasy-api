@@ -1,11 +1,10 @@
 package com.groweasy.groweasyapi.monitoring.model.entities;
 
-import com.groweasy.groweasyapi.monitoring.model.enums.SensorStatus;
+import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
 import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class Sensor {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private SensorStatus status;
+    private DeviceStatus status;
 
     @OneToMany(mappedBy = "sensor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Metric> metrics = new ArrayList<>();
@@ -39,7 +38,7 @@ public class Sensor {
     public static Sensor create(SensorType sensorType, DeviceData savedDeviceData) {
         return Sensor.builder()
                 .type(sensorType)
-                .status(SensorStatus.OK)
+                .status(DeviceStatus.ACTIVE)
                 .deviceData(savedDeviceData)
                 .build();
     }

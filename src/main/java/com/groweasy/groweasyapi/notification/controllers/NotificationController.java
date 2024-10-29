@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +22,7 @@ public class NotificationController {
     private final AuthenticationFacade authenticationFacade;
 
     // Endpoint para obtener las notificaciones del usuario autenticado
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<Notification>> getUserNotifications() {
         Long userId = authenticationFacade.getCurrentUser().getId();
         List<Notification> notifications = notificationService.getUserNotifications(userId);
@@ -33,7 +30,7 @@ public class NotificationController {
     }
 
     // Endpoint para borrar todas las notificaciones del usuario autenticado
-    @DeleteMapping
+    @DeleteMapping()
     public ResponseEntity<Void> clearUserNotifications() {
         Long userId = authenticationFacade.getCurrentUser().getId();
         notificationService.clearUserNotifications(userId);

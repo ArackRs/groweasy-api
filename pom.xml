@@ -129,6 +129,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
@@ -171,7 +176,7 @@
                 <filtering>true</filtering>
                 <excludes>
                     <!-- Commentary para Development / unCommentary para Production -->
-                    <exclude>application-*.yml</exclude>
+<!--                    <exclude>application-*.yml</exclude>-->
                 </excludes>
             </resource>
         </resources>

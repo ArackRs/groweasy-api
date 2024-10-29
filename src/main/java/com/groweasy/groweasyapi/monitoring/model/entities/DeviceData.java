@@ -1,7 +1,7 @@
 package com.groweasy.groweasyapi.monitoring.model.entities;
 
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
-import com.groweasy.groweasyapi.monitoring.model.enums.SensorStatus;
+import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,22 +21,29 @@ public class DeviceData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private SensorStatus status;
+    @Column(nullable = false, unique = true)
+    private String serialNumber;
+
+    private DeviceStatus status;
 
     private String location;
 
-    @OneToMany(mappedBy = "deviceData", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "deviceData", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Sensor> sensors = new ArrayList<>();
 
+    @OneToOne(mappedBy = "deviceData", cascade = CascadeType.ALL)
+    private DeviceConfig deviceConfig;
+
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(nullable = false)
     private UserEntity user;
 
-    public static DeviceData create(UserEntity user) {
+    public static DeviceData create(String name, UserEntity user) {
 
         return DeviceData.builder()
+                .serialNumber(name)
                 .location("Living Room")
-                .status(SensorStatus.OK)
+                .status(DeviceStatus.ACTIVE)
                 .user(user)
                 .build();
     }

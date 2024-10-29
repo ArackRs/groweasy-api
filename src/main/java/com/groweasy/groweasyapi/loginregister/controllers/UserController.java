@@ -1,7 +1,9 @@
 package com.groweasy.groweasyapi.loginregister.controllers;
 
+import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
 import com.groweasy.groweasyapi.loginregister.model.dto.request.UserRequest;
 import com.groweasy.groweasyapi.loginregister.model.dto.response.UserResponse;
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,6 +22,7 @@ import java.util.List;
 @Tag(name = "User Controller", description = "API for user operations")
 public class UserController {
     private final UserService userService;
+    private final AuthenticationFacade authenticationFacade;
 
     @GetMapping(value = "")
     @Operation(
@@ -39,16 +42,19 @@ public class UserController {
     )
     public ResponseEntity<UserResponse> getUserByUsername(@PathVariable String username) {
 
-        UserResponse userResponse = userService.getUserByUsername(username);
-        return ResponseEntity.status(HttpStatus.OK).body(userResponse);
+        UserEntity user = userService.getUserByUsername(username);
+        return ResponseEntity.status(HttpStatus.OK).body(UserResponse.fromEntity(user));
     }
 
     @PutMapping(value = "/username")
     @Operation(
-            summary = "Update user details",
+            summary = "Update username",
             description = "Updates an existing user's details"
     )
-    public ResponseEntity<HashMap<String, String>> updateUsername(@RequestParam Long userId, @RequestParam String username) {
+    public ResponseEntity<HashMap<String, String>> updateUsername(@RequestParam String username) {
+
+        Long userId = authenticationFacade.getCurrentUser().getId();
+
         userService.updateUsername(userId, username);
         HashMap<String, String> response = new HashMap<>();
         response.put("message", "User updated successfully");
@@ -62,14 +68,17 @@ public class UserController {
             description = "Allows a user to update their own account details"
     )
     public ResponseEntity<HashMap<String, String>> updateOwnAccount(@RequestBody UserRequest request) {
-        userService.updateProfile(request);
+
+        Long userId = authenticationFacade.getCurrentUser().getId();
+
+        userService.updateProfile(userId, request);
         HashMap<String, String> response = new HashMap<>();
         response.put("message", "User updated successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @DeleteMapping("/account")
+    @DeleteMapping("/me")
     @Operation(
             summary = "Delete own account",
             description = "Allows a user to delete their own account"

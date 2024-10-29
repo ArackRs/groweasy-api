@@ -39,10 +39,10 @@ public class DeviceConfig {
     private int lumThreshold;  // Umbral de alerta de luminosidad alta
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    @JoinColumn(nullable = false)
+    private DeviceData deviceData;
 
-    public static DeviceConfig create(UserEntity user) {
+    public static DeviceConfig create(DeviceData deviceData) {
 
         return DeviceConfig.builder()
                 .sampleInterval(10)
@@ -55,7 +55,7 @@ public class DeviceConfig {
                 .lumMin(300)
                 .lumMax(1000)
                 .lumThreshold(900)
-                .user(user)
+                .deviceData(deviceData)
                 .build();
     }
 

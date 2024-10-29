@@ -59,7 +59,7 @@ public class AuthController {
             description = "Fetches the details of the currently authenticated user"
     )
     public ResponseEntity<UserResponse> getCurrentUser() {
-        UserResponse userResponse = authService.getAuthenticatedUser();
+        UserResponse userResponse = UserResponse.fromEntity(authService.getAuthenticatedUser());
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 }

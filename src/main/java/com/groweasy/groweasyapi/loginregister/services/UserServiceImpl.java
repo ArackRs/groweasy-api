@@ -64,11 +64,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse getUserByUsername(String username) {
+    public UserEntity getUserByUsername(String username) {
         UserEntity userEntity = userRepository.findUserEntityByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        return UserResponse.fromEntity(userEntity);
+        return userEntity;
     }
 
     @Override
@@ -91,9 +91,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateProfile(UserRequest request) {
+    public void updateProfile(Long userId, UserRequest request) {
 
-        Long userId = authenticationFacade.getCurrentUser().getId();
+//        Long userId = authenticationFacade.getCurrentUser().getId();
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
