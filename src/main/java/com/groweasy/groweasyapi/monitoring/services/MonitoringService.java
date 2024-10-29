@@ -30,9 +30,7 @@ public class MonitoringService {
     private final DeviceConfigRepository deviceConfigRepository;
     private final SensorRepository sensorRepository;
     private final MetricRepository metricRepository;
-    private final AuthenticationFacade authenticationFacade;
     private final NotificationService notificationService;
-    private final UserService userService;
 
     public void receiveData(String deviceName, DeviceDataRequest data) {
 

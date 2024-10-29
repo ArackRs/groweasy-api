@@ -79,7 +79,7 @@ public class DeviceService {
 
         List<Metric> metrics = metricRepository.findAll();
 
-        metrics.removeIf(metric -> !sensors.contains(metric.getSensor()));
+        metrics.removeIf(metric -> sensors.contains(metric.getSensor()));
 
         return MetricResponse.fromEntityList(metrics);
     }

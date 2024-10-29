@@ -6,9 +6,13 @@ import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
 import com.groweasy.groweasyapi.loginregister.repository.RoleRepository;
 import com.groweasy.groweasyapi.loginregister.repository.UserRepository;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
+import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
 import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
 import com.groweasy.groweasyapi.monitoring.model.enums.SensorStatus;
 import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
+import com.groweasy.groweasyapi.monitoring.repository.DeviceConfigRepository;
+import com.groweasy.groweasyapi.monitoring.repository.DeviceDataRepository;
 import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +31,8 @@ public class SeedingEventHandler {
     private final UserRepository userPersistence;
     private final RoleRepository rolePersistence;
     private final PasswordEncoder passwordEncoder;
-    private final SensorRepository sensorRepository;
+    private final DeviceDataRepository deviceDataRepository;
+    private final DeviceConfigRepository deviceConfigRepository;
 
     @EventListener
     public void on(ApplicationReadyEvent event) {
@@ -73,5 +78,27 @@ public class SeedingEventHandler {
                 .build();
 
         userPersistence.save(user);
+
+        seedDevice(user);
+    }
+
+    private void seedDevice(UserEntity user) {
+
+        DeviceData deviceData = DeviceData.builder()
+                .name("GE001")
+                .location("Living Room")
+                .status(SensorStatus.OK)
+                .user(user)
+                .build();
+
+        deviceDataRepository.save(deviceData);
+
+        seedConfig(deviceData);
+    }
+
+    private void seedConfig(DeviceData deviceData) {
+
+        DeviceConfig deviceConfig = DeviceConfig.create(deviceData);
+        deviceConfigRepository.save(deviceConfig);
     }
 }
