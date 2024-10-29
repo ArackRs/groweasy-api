@@ -22,7 +22,7 @@ public class DeviceData {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String serialNumber;
+    private String macAddress;
 
     private DeviceStatus status;
 
@@ -34,16 +34,16 @@ public class DeviceData {
     @OneToOne(mappedBy = "deviceData", cascade = CascadeType.ALL)
     private DeviceConfig deviceConfig;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
     private UserEntity user;
 
-    public static DeviceData create(String name, UserEntity user) {
+    public static DeviceData create(String mac, UserEntity user) {
 
         return DeviceData.builder()
-                .serialNumber(name)
+                .macAddress(mac)
                 .location("Living Room")
-                .status(DeviceStatus.ACTIVE)
+                .status(DeviceStatus.INACTIVE)
                 .user(user)
                 .build();
     }

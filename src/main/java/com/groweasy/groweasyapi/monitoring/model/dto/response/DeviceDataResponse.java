@@ -6,7 +6,7 @@ import java.util.List;
 
 public record DeviceDataResponse(
         Long id,
-        String serialNumber,
+        String macAddress,
         String status,
         String location,
         List<SensorResponse> sensors
@@ -14,7 +14,7 @@ public record DeviceDataResponse(
     public static DeviceDataResponse fromEntity(DeviceData deviceData) {
         return new DeviceDataResponse(
                 deviceData.getId(),
-                deviceData.getSerialNumber(),
+                deviceData.getMacAddress(),
                 deviceData.getStatus().name(),
                 deviceData.getLocation(),
                 SensorResponse.fromEntityList(deviceData.getSensors())

@@ -76,26 +76,26 @@ public class SeedingEventHandler {
 
         userPersistence.save(user);
 
-        seedDevice(user);
+//        seedDevice(user);
     }
 
-    private void seedDevice(UserEntity user) {
-
-        DeviceData deviceData = DeviceData.builder()
-                .serialNumber("device-ge001")
-                .location("Living Room")
-                .status(DeviceStatus.ACTIVE)
-                .user(user)
-                .build();
-
-        deviceDataRepository.save(deviceData);
-
-        seedConfig(deviceData);
-    }
-
-    private void seedConfig(DeviceData deviceData) {
-
-        DeviceConfig deviceConfig = DeviceConfig.create(deviceData);
-        deviceConfigRepository.save(deviceConfig);
-    }
+//    private void seedDevice(UserEntity user) {
+//
+//        DeviceData deviceData = DeviceData.builder()
+//                .serialNumber("device-ge001")
+//                .location("Living Room")
+//                .status(DeviceStatus.ACTIVE)
+//                .user(user)
+//                .build();
+//
+//        deviceDataRepository.save(deviceData);
+//
+//        seedConfig(deviceData);
+//    }
+//
+//    private void seedConfig(DeviceData deviceData) {
+//
+//        DeviceConfig deviceConfig = DeviceConfig.create(deviceData);
+//        deviceConfigRepository.save(deviceConfig);
+//    }
 }
