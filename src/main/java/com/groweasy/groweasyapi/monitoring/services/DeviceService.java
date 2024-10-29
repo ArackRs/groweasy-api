@@ -4,15 +4,17 @@ import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceConfigRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceConfigResponse;
-import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceDataResponse;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.MetricResponse;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
 import com.groweasy.groweasyapi.monitoring.model.entities.Metric;
 import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
+import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
+import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceConfigRepository;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceDataRepository;
 import com.groweasy.groweasyapi.monitoring.repository.MetricRepository;
+import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,27 +28,28 @@ public class DeviceService {
 
     private final DeviceDataRepository deviceDataRepository;
     private final DeviceConfigRepository deviceConfigRepository;
+    private final SensorRepository sensorRepository;
     private final MetricRepository metricRepository;
     private final AuthenticationFacade authenticationFacade;
 
-    public void registerDevice(String serialNumber) {
+    public void connectDevice(Long id) {
 
         UserEntity user = authenticationFacade.getCurrentUser();
 
-        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
-                .orElseGet(() -> createDefaultData(serialNumber, user));
+        DeviceData deviceData = getDeviceById(id);
+        deviceData.setUser(user);
+        deviceData.setStatus(DeviceStatus.ACTIVE);
 
         deviceDataRepository.save(deviceData);
-
-        DeviceConfig config = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
-                .orElseGet(() -> createDefaultConfig(deviceData));
-
-        deviceConfigRepository.save(config);
+//        createSensors(deviceData);
     }
 
-    public DeviceConfigResponse updateConfig(String serialNumber, DeviceConfigRequest config) {
+    public DeviceConfigResponse updateConfig(DeviceConfigRequest config) {
 
-        DeviceData deviceData = getDeviceBySerialNumber(serialNumber);
+        UserEntity user = authenticationFacade.getCurrentUser();
+
+        DeviceData deviceData = deviceDataRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Device not found"));
 
         DeviceConfig deviceConfig = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
                 .orElseThrow(() -> new RuntimeException("Config not found"));
@@ -58,9 +61,9 @@ public class DeviceService {
         return DeviceConfigResponse.fromEntity(newConfig);
     }
 
-    public List<MetricResponse> getMetrics(String serialNumber) {
+    public List<MetricResponse> getMetrics(String mac) {
 
-        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
+        DeviceData deviceData = deviceDataRepository.findByMacAddress(mac)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
 
         List<Sensor> sensors = deviceData.getSensors();
@@ -72,9 +75,9 @@ public class DeviceService {
         return MetricResponse.fromEntityList(metrics);
     }
 
-    public DeviceData getDeviceBySerialNumber(String serialNumber) {
+    public DeviceData getDeviceById(Long id) {
 
-        return deviceDataRepository.findBySerialNumber(serialNumber)
+        return deviceDataRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
     }
 
@@ -82,13 +85,11 @@ public class DeviceService {
         return deviceDataRepository.findAll();
     }
 
-    private DeviceData createDefaultData(String serialNumber, UserEntity user) {
+    private void createSensors(DeviceData deviceData) {
+        Sensor temSensor = sensorRepository.save(Sensor.create(SensorType.TEMPERATURE, deviceData));
+        Sensor humSensor = sensorRepository.save(Sensor.create(SensorType.HUMIDITY, deviceData));
+        Sensor lumSensor = sensorRepository.save(Sensor.create(SensorType.LUMINOSITY, deviceData));
 
-        return deviceDataRepository.save(DeviceData.create(serialNumber, user));
-    }
-
-    private DeviceConfig createDefaultConfig(DeviceData deviceData) {
-
-        return deviceConfigRepository.save(DeviceConfig.create(deviceData));
+        sensorRepository.saveAll(List.of(temSensor, humSensor, lumSensor));
     }
 }

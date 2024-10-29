@@ -17,15 +17,15 @@ public class MonitoringController {
 
     private final MonitoringService monitoringService;
 
-    @PostMapping("/{serialNumber}/data")
-    public ResponseEntity<Void> receiveData(@PathVariable String serialNumber, @RequestBody DeviceDataRequest data) {
+    @PostMapping("/data")
+    public ResponseEntity<Void> receiveData(@RequestBody DeviceDataRequest data) {
 
-        monitoringService.receiveData(serialNumber, data);
+        monitoringService.receiveData(data);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/{serialNumber}/config")
-    public ResponseEntity<DeviceConfigResponse> getConfig(@PathVariable String serialNumber) {
-        return ResponseEntity.status(HttpStatus.OK).body(monitoringService.getConfig(serialNumber));
+    @GetMapping("/{macAddress}/config")
+    public ResponseEntity<DeviceConfigResponse> getConfig(@PathVariable String macAddress) {
+        return ResponseEntity.status(HttpStatus.OK).body(monitoringService.getConfig(macAddress));
     }
 }

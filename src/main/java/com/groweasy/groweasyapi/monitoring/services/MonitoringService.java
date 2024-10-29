@@ -1,6 +1,8 @@
 package com.groweasy.groweasyapi.monitoring.services;
 
 import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
+import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
+import com.groweasy.groweasyapi.loginregister.repository.UserRepository;
 import com.groweasy.groweasyapi.loginregister.services.UserService;
 import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceDataRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceConfigResponse;
@@ -8,6 +10,7 @@ import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
 import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
 import com.groweasy.groweasyapi.monitoring.model.entities.Metric;
 import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
+import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
 import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceConfigRepository;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceDataRepository;
@@ -31,34 +34,42 @@ public class MonitoringService {
     private final SensorRepository sensorRepository;
     private final MetricRepository metricRepository;
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
-    public void receiveData(String serialNumber, DeviceDataRequest data) {
+    public void receiveData(DeviceDataRequest data) {
 
-        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new RuntimeException("Device not found"));
+        DeviceData deviceData = deviceDataRepository.findByMacAddress(data.macAddress())
+                .orElseGet(() -> createDefaultDevice(data.macAddress()));
 
-        Sensor temSensor = sensorRepository.findByTypeAndDeviceDataId(SensorType.TEMPERATURE, deviceData.getId())
-                .orElseGet(() -> Sensor.create(SensorType.TEMPERATURE, deviceData));
-        Metric temMetric = Metric.create(data.temperature(), "°C", temSensor);
+        DeviceConfig config = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
+                .orElseGet(() -> createDefaultConfig(deviceData));
 
-        Sensor humSensor = sensorRepository.findByTypeAndDeviceDataId(SensorType.HUMIDITY, deviceData.getId())
-                .orElseGet(() -> Sensor.create(SensorType.HUMIDITY, deviceData));
-        Metric humMetric = Metric.create(data.humidity(), "%", humSensor);
+        deviceConfigRepository.save(config);
 
-        Sensor lumSensor = sensorRepository.findByTypeAndDeviceDataId(SensorType.LUMINOSITY, deviceData.getId())
-                .orElseGet(() -> Sensor.create(SensorType.LUMINOSITY, deviceData));
-        Metric lumMetric = Metric.create(data.luminosity(), "lux", lumSensor);
+        if (deviceData.getStatus().equals(DeviceStatus.ACTIVE)) {
 
-        sensorRepository.saveAll(List.of(temSensor, humSensor, lumSensor));
-        metricRepository.saveAll(List.of(temMetric, humMetric, lumMetric));
+            Sensor temSensor = sensorRepository.findByTypeAndDeviceDataId(SensorType.TEMPERATURE, deviceData.getId())
+                    .orElseGet(() -> Sensor.create(SensorType.TEMPERATURE, deviceData));
+            Metric temMetric = Metric.create(data.temperature(), "°C", temSensor);
 
-        // Verifica los umbrales después de guardar los datos
-        checkThresholds(data.temperature(), data.humidity(), data.luminosity(), serialNumber);
+            Sensor humSensor = sensorRepository.findByTypeAndDeviceDataId(SensorType.HUMIDITY, deviceData.getId())
+                    .orElseGet(() -> Sensor.create(SensorType.HUMIDITY, deviceData));
+            Metric humMetric = Metric.create(data.humidity(), "%", humSensor);
+
+            Sensor lumSensor = sensorRepository.findByTypeAndDeviceDataId(SensorType.LUMINOSITY, deviceData.getId())
+                    .orElseGet(() -> Sensor.create(SensorType.LUMINOSITY, deviceData));
+            Metric lumMetric = Metric.create(data.luminosity(), "lux", lumSensor);
+
+            sensorRepository.saveAll(List.of(temSensor, humSensor, lumSensor));
+            metricRepository.saveAll(List.of(temMetric, humMetric, lumMetric));
+
+            checkThresholds(data.temperature(), data.humidity(), data.luminosity(), data.macAddress());
+        }
     }
 
-    public DeviceConfigResponse getConfig(String serialNumber) {
+    public DeviceConfigResponse getConfig(String mac) {
 
-        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
+        DeviceData deviceData = deviceDataRepository.findByMacAddress(mac)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
 
         DeviceConfig config = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
@@ -67,9 +78,9 @@ public class MonitoringService {
         return DeviceConfigResponse.fromEntity(config);
     }
 
-    private void checkThresholds(Double temperature, Double humidity, Double luminosity, String serialNumber) {
+    private void checkThresholds(Double temperature, Double humidity, Double luminosity, String mac) {
 
-        DeviceData deviceData = deviceDataRepository.findBySerialNumber(serialNumber)
+        DeviceData deviceData = deviceDataRepository.findByMacAddress(mac)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
 
         DeviceConfig config = deviceConfigRepository.findByDeviceDataId(deviceData.getId())
@@ -99,4 +110,15 @@ public class MonitoringService {
         }
     }
 
+    private DeviceData createDefaultDevice(String mac) {
+
+        UserEntity user = userRepository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("User admin not found"));
+
+        return deviceDataRepository.save(DeviceData.create(mac, user));
+    }
+    private DeviceConfig createDefaultConfig(DeviceData deviceData) {
+
+        return deviceConfigRepository.save(DeviceConfig.create(deviceData));
+    }
 }

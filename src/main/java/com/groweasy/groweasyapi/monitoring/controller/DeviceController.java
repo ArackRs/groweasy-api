@@ -22,28 +22,28 @@ public class DeviceController {
     private final DeviceService deviceService;
 
     @PostMapping
-    public ResponseEntity<Void> registerDevice(@RequestParam String serialNumber) {
-        deviceService.registerDevice(serialNumber);
+    public ResponseEntity<Void> registerDevice(@RequestParam Long id) {
+        deviceService.connectDevice(id);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PutMapping("/{serialNumber}/config")
-    public ResponseEntity<DeviceConfigResponse> updateConfig(@PathVariable String serialNumber, @RequestBody DeviceConfigRequest config) {
+    @PutMapping("/config")
+    public ResponseEntity<DeviceConfigResponse> updateConfig(@RequestBody DeviceConfigRequest config) {
 
-        DeviceConfigResponse response = deviceService.updateConfig(serialNumber, config);
+        DeviceConfigResponse response = deviceService.updateConfig(config);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{serialNumber}")
-    public ResponseEntity<DeviceDataResponse> getDevice(@PathVariable String serialNumber) {
+    @GetMapping("/{id}")
+    public ResponseEntity<DeviceDataResponse> getDevice(@PathVariable Long id) {
 
-        DeviceDataResponse response = DeviceDataResponse.fromEntity(deviceService.getDeviceBySerialNumber(serialNumber));
+        DeviceDataResponse response = DeviceDataResponse.fromEntity(deviceService.getDeviceById(id));
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/{serialNumber}/metrics")
-    public ResponseEntity<List<MetricResponse>> getMetrics(@PathVariable String serialNumber) {
-        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getMetrics(serialNumber));
+    @GetMapping("/{macAddress}/metrics")
+    public ResponseEntity<List<MetricResponse>> getMetrics(@PathVariable String macAddress) {
+        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getMetrics(macAddress));
     }
 
     @GetMapping
