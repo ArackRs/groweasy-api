@@ -1,9 +1,11 @@
 package com.groweasy.groweasyapi.monitoring.controller;
 
 import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceConfigRequest;
+import com.groweasy.groweasyapi.monitoring.model.dto.request.SensorConfigRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceConfigResponse;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceDataResponse;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.MetricResponse;
+import com.groweasy.groweasyapi.monitoring.model.dto.response.SensorConfigResponse;
 import com.groweasy.groweasyapi.monitoring.services.DeviceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +23,10 @@ public class DeviceController {
 
     private final DeviceService deviceService;
 
-    @PostMapping
-    public ResponseEntity<Void> registerDevice(@RequestParam Long id) {
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> registerDevice(@PathVariable Long id) {
         deviceService.connectDevice(id);
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @PutMapping("/config")
-    public ResponseEntity<DeviceConfigResponse> updateConfig(@RequestBody DeviceConfigRequest config) {
-
-        DeviceConfigResponse response = deviceService.updateConfig(config);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
@@ -39,11 +34,6 @@ public class DeviceController {
 
         DeviceDataResponse response = DeviceDataResponse.fromEntity(deviceService.getDeviceById(id));
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @GetMapping("/{macAddress}/metrics")
-    public ResponseEntity<List<MetricResponse>> getMetrics(@PathVariable String macAddress) {
-        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getMetrics(macAddress));
     }
 
     @GetMapping

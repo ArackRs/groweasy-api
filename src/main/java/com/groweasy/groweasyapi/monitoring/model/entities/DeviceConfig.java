@@ -1,7 +1,6 @@
 package com.groweasy.groweasyapi.monitoring.model.entities;
 
-import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
-import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceConfigRequest;
+import com.groweasy.groweasyapi.monitoring.model.dto.request.SensorConfigRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,9 +39,27 @@ public class DeviceConfig {
 
     @OneToOne
     @JoinColumn(nullable = false)
-    private DeviceData deviceData;
+    private Device device;
 
-    public static DeviceConfig create(DeviceData deviceData) {
+    public DeviceConfig(Device device) {
+        this.device = device;
+        initializeDefaults();
+    }
+
+    private void initializeDefaults() {
+        this.sampleInterval = 10;
+        this.tempMin = 15.0;
+        this.tempMax = 30.0;
+        this.tempThreshold = 28.0;
+        this.humMin = 40.0;
+        this.humMax = 60.0;
+        this.humThreshold = 55.0;
+        this.lumMin = 300;
+        this.lumMax = 1000;
+        this.lumThreshold = 900;
+    }
+
+    public static DeviceConfig create(Device device) {
 
         return DeviceConfig.builder()
                 .sampleInterval(10)
@@ -55,21 +72,28 @@ public class DeviceConfig {
                 .lumMin(300)
                 .lumMax(1000)
                 .lumThreshold(900)
-                .deviceData(deviceData)
+                .device(device)
                 .build();
     }
 
-    public void update(DeviceConfigRequest config) {
+    public void update(SensorConfig config) {
 
-        this.sampleInterval = config.sampleInterval();
-        this.tempMin = config.tempMin();
-        this.tempMax = config.tempMax();
-        this.tempThreshold = config.tempThreshold();
-        this.humMin = config.humMin();
-        this.humMax = config.humMax();
-        this.humThreshold = config.humThreshold();
-        this.lumMin = config.lumMin();
-        this.lumMax = config.lumMax();
-        this.lumThreshold = config.lumThreshold();
+        switch (config.getSensor().getType()) {
+            case TEMPERATURE -> {
+                this.tempMin = config.getMin();
+                this.tempMax = config.getMax();
+                this.tempThreshold = config.getThreshold();
+            }
+            case HUMIDITY -> {
+                this.humMin = config.getMin();
+                this.humMax = config.getMax();
+                this.humThreshold = config.getThreshold();
+            }
+            case LUMINOSITY -> {
+                this.lumMin = (int) config.getMin();
+                this.lumMax = (int) config.getMax();
+                this.lumThreshold = (int) config.getThreshold();
+            }
+        }
     }
 }
