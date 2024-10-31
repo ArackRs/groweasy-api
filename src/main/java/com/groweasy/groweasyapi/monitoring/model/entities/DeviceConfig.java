@@ -76,23 +76,23 @@ public class DeviceConfig {
                 .build();
     }
 
-    public void update(SensorConfigRequest config) {
+    public void update(SensorConfig config) {
 
-        switch (config.type()) {
+        switch (config.getSensor().getType()) {
             case TEMPERATURE -> {
-                this.tempMin = config.min();
-                this.tempMax = config.max();
-                this.tempThreshold = config.threshold();
+                this.tempMin = config.getMin();
+                this.tempMax = config.getMax();
+                this.tempThreshold = config.getThreshold();
             }
             case HUMIDITY -> {
-                this.humMin = config.min();
-                this.humMax = config.max();
-                this.humThreshold = config.threshold();
+                this.humMin = config.getMin();
+                this.humMax = config.getMax();
+                this.humThreshold = config.getThreshold();
             }
             case LUMINOSITY -> {
-                this.lumMin = config.min().intValue();
-                this.lumMax = config.max().intValue();
-                this.lumThreshold = config.threshold().intValue();
+                this.lumMin = (int) config.getMin();
+                this.lumMax = (int) config.getMax();
+                this.lumThreshold = (int) config.getThreshold();
             }
         }
     }

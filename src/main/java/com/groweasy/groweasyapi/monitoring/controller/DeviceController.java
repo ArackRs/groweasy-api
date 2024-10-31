@@ -23,17 +23,10 @@ public class DeviceController {
 
     private final DeviceService deviceService;
 
-    @PostMapping
-    public ResponseEntity<Void> registerDevice(@RequestParam Long id) {
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> registerDevice(@PathVariable Long id) {
         deviceService.connectDevice(id);
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @PutMapping("/config")
-    public ResponseEntity<SensorConfigResponse> updateConfig(@RequestBody SensorConfigRequest config) {
-
-        SensorConfigResponse response = deviceService.updateConfig(config);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
@@ -41,11 +34,6 @@ public class DeviceController {
 
         DeviceDataResponse response = DeviceDataResponse.fromEntity(deviceService.getDeviceById(id));
         return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-    @GetMapping("/{macAddress}/metrics")
-    public ResponseEntity<List<MetricResponse>> getMetrics(@PathVariable String macAddress) {
-        return ResponseEntity.status(HttpStatus.OK).body(deviceService.getMetrics(macAddress));
     }
 
     @GetMapping

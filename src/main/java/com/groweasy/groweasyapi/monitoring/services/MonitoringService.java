@@ -30,9 +30,9 @@ public class MonitoringService {
     private final DeviceRepository deviceRepository;
     private final DeviceConfigRepository deviceConfigRepository;
     private final SensorRepository sensorRepository;
-    private final MetricRepository metricRepository;
-    private final NotificationService notificationService;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
+    private final SensorService sensorService;
 
     public void receiveData(DeviceDataRequest data) {
 
@@ -41,22 +41,14 @@ public class MonitoringService {
 
         if (device.getStatus().equals(DeviceStatus.ACTIVE)) {
 
-            Sensor temSensor = sensorRepository.findByTypeAndDeviceId(SensorType.TEMPERATURE, device.getId())
-                    .orElseThrow(() -> new RuntimeException("Temperature sensor not found"));
-            Metric temMetric = Metric.create(data.temperature(), "°C", temSensor);
-            temSensor.addMetric(temMetric);
+            Sensor temSensor = sensorService.getByTypeAndDeviceId(SensorType.TEMPERATURE, device.getId());
+            Sensor humSensor = sensorService.getByTypeAndDeviceId(SensorType.HUMIDITY, device.getId());
+            Sensor lumSensor = sensorService.getByTypeAndDeviceId(SensorType.LUMINOSITY, device.getId());
 
-            Sensor humSensor = sensorRepository.findByTypeAndDeviceId(SensorType.HUMIDITY, device.getId())
-                    .orElseThrow(() -> new RuntimeException("Humidity sensor not found"));
-            Metric humMetric = Metric.create(data.humidity(), "%", humSensor);
-            humSensor.addMetric(humMetric);
+            temSensor.addMetric(Metric.create(data.temperature(), "°C", temSensor));
+            humSensor.addMetric(Metric.create(data.humidity(), "%", humSensor));
+            lumSensor.addMetric(Metric.create(data.luminosity(), "lux", lumSensor));
 
-            Sensor lumSensor = sensorRepository.findByTypeAndDeviceId(SensorType.LUMINOSITY, device.getId())
-                    .orElseThrow(() -> new RuntimeException("Luminosity sensor not found"));
-            Metric lumMetric = Metric.create(data.luminosity(), "lux", lumSensor);
-            lumSensor.addMetric(lumMetric); // Usa addMetric
-
-            // Guarda los sensores junto con sus métricas gracias a CascadeType.ALL
             sensorRepository.saveAll(List.of(temSensor, humSensor, lumSensor));
 
             checkThresholds(data.temperature(), data.humidity(), data.luminosity(), data.macAddress());
@@ -69,10 +61,13 @@ public class MonitoringService {
         Device device = deviceRepository.findByMacAddress(mac)
                 .orElseThrow(() -> new RuntimeException("Device not found"));
 
-        DeviceConfig config = deviceConfigRepository.findByDeviceId(device.getId())
-                .orElseThrow(() -> new RuntimeException("Config not found"));
+        Sensor temSensor = sensorService.getByTypeAndDeviceId(SensorType.TEMPERATURE, device.getId());
+        Sensor humSensor = sensorService.getByTypeAndDeviceId(SensorType.HUMIDITY, device.getId());
+        Sensor lumSensor = sensorService.getByTypeAndDeviceId(SensorType.LUMINOSITY, device.getId());
 
-        return DeviceConfigResponse.fromEntity(config);
+        return DeviceConfigResponse.fromSensorConfigs(
+                temSensor.getConfig(), humSensor.getConfig(), lumSensor.getConfig()
+        );
     }
 
     private void checkThresholds(Double temperature, Double humidity, Double luminosity, String mac) {

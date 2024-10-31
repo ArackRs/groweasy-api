@@ -1,5 +1,6 @@
 package com.groweasy.groweasyapi.monitoring.model.entities;
 
+import com.groweasy.groweasyapi.monitoring.model.dto.response.SensorResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,7 +29,14 @@ public class SensorConfig {
 
     public SensorConfig(Sensor sensor) {
         this.sensor = sensor;
+        sensor.setConfig(this);
         initializeDefaults();
+    }
+
+    public void update(double min, double max, double threshold) {
+        this.min = min;
+        this.max = max;
+        this.threshold = threshold;
     }
 
     private void initializeDefaults() {

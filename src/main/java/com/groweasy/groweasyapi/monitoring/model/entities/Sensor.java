@@ -29,12 +29,12 @@ public class Sensor {
     private DeviceStatus status;
 
     @OneToOne(mappedBy = "sensor", cascade = CascadeType.ALL)
-    private SensorConfig sensorConfig;
+    private SensorConfig config;
 
     @PrePersist
     private void prePersist() {
-        if (this.sensorConfig == null) {
-            this.sensorConfig = new SensorConfig(this);
+        if (this.config == null) {
+            this.config = new SensorConfig(this);
         }
     }
 

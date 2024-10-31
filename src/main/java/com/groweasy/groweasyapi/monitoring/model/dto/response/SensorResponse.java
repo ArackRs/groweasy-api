@@ -18,7 +18,7 @@ public record SensorResponse(
                 entity.getType().name(),
                 entity.getStatus().name(),
                 entity.getDevice().getId(),
-                SensorConfigResponse.fromEntity(entity.getDevice().getDeviceConfig())
+                SensorConfigResponse.fromEntity(entity.getConfig())
         );
     }
 

@@ -5,10 +5,7 @@ import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.monitoring.model.dto.request.SensorConfigRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.MetricResponse;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.SensorConfigResponse;
-import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
-import com.groweasy.groweasyapi.monitoring.model.entities.Device;
-import com.groweasy.groweasyapi.monitoring.model.entities.Metric;
-import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
+import com.groweasy.groweasyapi.monitoring.model.entities.*;
 import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
 import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceConfigRepository;
@@ -28,7 +25,6 @@ public class DeviceService {
 
     private final DeviceRepository deviceRepository;
     private final DeviceConfigRepository deviceConfigRepository;
-    private final SensorRepository sensorRepository;
     private final MetricRepository metricRepository;
     private final AuthenticationFacade authenticationFacade;
 
@@ -41,39 +37,24 @@ public class DeviceService {
         device.setStatus(DeviceStatus.ACTIVE);
 
         deviceRepository.save(device);
-//        createSensors(deviceData);
     }
 
-    public SensorConfigResponse updateConfig(SensorConfigRequest config) {
-
-        UserEntity user = authenticationFacade.getCurrentUser();
-
-        Device device = deviceRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Device not found"));
-
-        DeviceConfig deviceConfig = deviceConfigRepository.findByDeviceId(device.getId())
-                .orElseThrow(() -> new RuntimeException("Config not found"));
-
-        deviceConfig.update(config);
-
-        DeviceConfig newConfig = deviceConfigRepository.save(deviceConfig);
-
-        return SensorConfigResponse.fromEntity(newConfig);
-    }
-
-    public List<MetricResponse> getMetrics(String mac) {
-
-        Device device = deviceRepository.findByMacAddress(mac)
-                .orElseThrow(() -> new RuntimeException("Device not found"));
-
-        List<Sensor> sensors = device.getSensors();
-
-        List<Metric> metrics = metricRepository.findAll();
-
-        metrics.removeIf(metric -> sensors.contains(metric.getSensor()));
-
-        return MetricResponse.fromEntityList(metrics);
-    }
+//    public SensorConfigResponse updateConfig(SensorConfigRequest config) {
+//
+//        UserEntity user = authenticationFacade.getCurrentUser();
+//
+//        Device device = deviceRepository.findByUserId(user.getId())
+//                .orElseThrow(() -> new RuntimeException("Device not found"));
+//
+//        DeviceConfig deviceConfig = deviceConfigRepository.findByDeviceId(device.getId())
+//                .orElseThrow(() -> new RuntimeException("Config not found"));
+//
+//        deviceConfig.update(config);
+//
+//        DeviceConfig newConfig = deviceConfigRepository.save(deviceConfig);
+//
+//        return SensorConfigResponse.fromEntity(newConfig);
+//    }
 
     public Device getDeviceById(Long id) {
 

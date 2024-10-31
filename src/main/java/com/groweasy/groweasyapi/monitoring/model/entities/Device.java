@@ -52,6 +52,16 @@ public class Device {
         createSensors();
     }
 
+    public void addSensor(Sensor sensor) {
+        this.sensors.add(sensor);
+        sensor.setDevice(this);
+    }
+
+    public void removeSensor(Sensor sensor) {
+        this.sensors.remove(sensor);
+        sensor.setDevice(null);
+    }
+
     private void createSensors() {
 
         Sensor temperature = Sensor.create(SensorType.TEMPERATURE, this);
