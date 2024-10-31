@@ -28,18 +28,39 @@ public class Sensor {
     @Enumerated(EnumType.STRING)
     private DeviceStatus status;
 
+    @OneToOne(mappedBy = "sensor", cascade = CascadeType.ALL)
+    private SensorConfig sensorConfig;
+
+    @PrePersist
+    private void prePersist() {
+        if (this.sensorConfig == null) {
+            this.sensorConfig = new SensorConfig(this);
+        }
+    }
+
     @OneToMany(mappedBy = "sensor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Metric> metrics = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "device_data_id")
-    private DeviceData deviceData;
+    private Device device;
 
-    public static Sensor create(SensorType sensorType, DeviceData savedDeviceData) {
+    public void addMetric(Metric metric) {
+        this.metrics.add(metric);
+        metric.setSensor(this);
+    }
+
+    public void removeMetric(Metric metric) {
+        this.metrics.remove(metric);
+        metric.setSensor(null);
+    }
+
+    public static Sensor create(SensorType sensorType, Device device) {
         return Sensor.builder()
                 .type(sensorType)
                 .status(DeviceStatus.ACTIVE)
-                .deviceData(savedDeviceData)
+                .metrics(new ArrayList<>())
+                .device(device)
                 .build();
     }
 

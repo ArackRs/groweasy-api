@@ -1,6 +1,6 @@
 package com.groweasy.groweasyapi.monitoring.model.dto.response;
 
-import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
+import com.groweasy.groweasyapi.monitoring.model.entities.Device;
 
 import java.util.List;
 
@@ -11,17 +11,17 @@ public record DeviceDataResponse(
         String location,
         List<SensorResponse> sensors
 ) {
-    public static DeviceDataResponse fromEntity(DeviceData deviceData) {
+    public static DeviceDataResponse fromEntity(Device device) {
         return new DeviceDataResponse(
-                deviceData.getId(),
-                deviceData.getMacAddress(),
-                deviceData.getStatus().name(),
-                deviceData.getLocation(),
-                SensorResponse.fromEntityList(deviceData.getSensors())
+                device.getId(),
+                device.getMacAddress(),
+                device.getStatus().name(),
+                device.getLocation(),
+                SensorResponse.fromEntityList(device.getSensors())
         );
     }
 
-    public static List<DeviceDataResponse> fromEntityList(List<DeviceData> allDevices) {
+    public static List<DeviceDataResponse> fromEntityList(List<Device> allDevices) {
         return allDevices.stream()
                 .map(DeviceDataResponse::fromEntity)
                 .toList();

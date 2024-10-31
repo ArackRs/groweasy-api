@@ -176,7 +176,7 @@
                 <filtering>true</filtering>
                 <excludes>
                     <!-- Commentary para Development / unCommentary para Production -->
-                    <exclude>application-*.yml</exclude>
+<!--                    <exclude>application-*.yml</exclude>-->
                 </excludes>
             </resource>
         </resources>

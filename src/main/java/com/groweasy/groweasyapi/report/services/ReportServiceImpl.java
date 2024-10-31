@@ -2,9 +2,9 @@ package com.groweasy.groweasyapi.report.services;
 
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.services.AuthService;
-import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
+import com.groweasy.groweasyapi.monitoring.model.entities.Device;
 import com.groweasy.groweasyapi.monitoring.model.entities.Sensor;
-import com.groweasy.groweasyapi.monitoring.repository.DeviceDataRepository;
+import com.groweasy.groweasyapi.monitoring.repository.DeviceRepository;
 import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import com.groweasy.groweasyapi.report.model.dto.ReportResponse;
 import com.groweasy.groweasyapi.report.model.entities.Report;
@@ -27,17 +27,17 @@ public class ReportServiceImpl implements ReportService {
 
     private final AuthService authService;
     private final ReportRepository reportRepository;
-    private final DeviceDataRepository deviceDataRepository;
+    private final DeviceRepository deviceRepository;
     private final SensorRepository sensorRepository;
 
     @Override
     public ReportResponse generateReport() {
 
         UserEntity user = authService.getAuthenticatedUser();
-        DeviceData deviceData = deviceDataRepository.findByUserId(user.getId())
+        Device device = deviceRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("No data found for the user"));
 
-        List<Sensor> sensors = sensorRepository.findAllByDeviceDataId(deviceData.getId());
+        List<Sensor> sensors = sensorRepository.findAllByDeviceId(device.getId());
 
         StatisticalAnalysis analysis = new StatisticalAnalysis();
         analysis.performAnalysis(sensors);

@@ -8,13 +8,17 @@ import java.util.stream.Collectors;
 public record SensorResponse(
         Long id,
         String type,
-        String status
+        String status,
+        Long deviceId,
+        SensorConfigResponse config
 ) {
     public static SensorResponse fromEntity(Sensor entity) {
         return new SensorResponse(
                 entity.getId(),
                 entity.getType().name(),
-                entity.getStatus().name()
+                entity.getStatus().name(),
+                entity.getDevice().getId(),
+                SensorConfigResponse.fromEntity(entity.getDevice().getDeviceConfig())
         );
     }
 

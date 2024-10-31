@@ -6,11 +6,8 @@ import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.loginregister.model.enums.RoleEnum;
 import com.groweasy.groweasyapi.loginregister.repository.RoleRepository;
 import com.groweasy.groweasyapi.loginregister.repository.UserRepository;
-import com.groweasy.groweasyapi.monitoring.model.entities.DeviceConfig;
-import com.groweasy.groweasyapi.monitoring.model.entities.DeviceData;
-import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceConfigRepository;
-import com.groweasy.groweasyapi.monitoring.repository.DeviceDataRepository;
+import com.groweasy.groweasyapi.monitoring.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -28,7 +25,7 @@ public class SeedingEventHandler {
     private final UserRepository userPersistence;
     private final RoleRepository rolePersistence;
     private final PasswordEncoder passwordEncoder;
-    private final DeviceDataRepository deviceDataRepository;
+    private final DeviceRepository deviceRepository;
     private final DeviceConfigRepository deviceConfigRepository;
 
     @EventListener

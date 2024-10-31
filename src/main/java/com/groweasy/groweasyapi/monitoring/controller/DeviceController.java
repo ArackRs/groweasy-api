@@ -1,9 +1,11 @@
 package com.groweasy.groweasyapi.monitoring.controller;
 
 import com.groweasy.groweasyapi.monitoring.model.dto.request.DeviceConfigRequest;
+import com.groweasy.groweasyapi.monitoring.model.dto.request.SensorConfigRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceConfigResponse;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.DeviceDataResponse;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.MetricResponse;
+import com.groweasy.groweasyapi.monitoring.model.dto.response.SensorConfigResponse;
 import com.groweasy.groweasyapi.monitoring.services.DeviceService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +30,9 @@ public class DeviceController {
     }
 
     @PutMapping("/config")
-    public ResponseEntity<DeviceConfigResponse> updateConfig(@RequestBody DeviceConfigRequest config) {
+    public ResponseEntity<SensorConfigResponse> updateConfig(@RequestBody SensorConfigRequest config) {
 
-        DeviceConfigResponse response = deviceService.updateConfig(config);
+        SensorConfigResponse response = deviceService.updateConfig(config);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
