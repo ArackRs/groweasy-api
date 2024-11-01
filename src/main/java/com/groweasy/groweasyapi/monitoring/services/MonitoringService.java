@@ -12,7 +12,6 @@ import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
 import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceConfigRepository;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceRepository;
-import com.groweasy.groweasyapi.monitoring.repository.MetricRepository;
 import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import com.groweasy.groweasyapi.notification.model.enums.NotificationType;
 import com.groweasy.groweasyapi.notification.services.NotificationService;
