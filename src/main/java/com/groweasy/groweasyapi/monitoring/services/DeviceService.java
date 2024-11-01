@@ -2,16 +2,11 @@ package com.groweasy.groweasyapi.monitoring.services;
 
 import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
 import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
-import com.groweasy.groweasyapi.monitoring.model.dto.request.SensorConfigRequest;
-import com.groweasy.groweasyapi.monitoring.model.dto.response.MetricResponse;
-import com.groweasy.groweasyapi.monitoring.model.dto.response.SensorConfigResponse;
 import com.groweasy.groweasyapi.monitoring.model.entities.*;
 import com.groweasy.groweasyapi.monitoring.model.enums.DeviceStatus;
-import com.groweasy.groweasyapi.monitoring.model.enums.SensorType;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceConfigRepository;
 import com.groweasy.groweasyapi.monitoring.repository.DeviceRepository;
 import com.groweasy.groweasyapi.monitoring.repository.MetricRepository;
-import com.groweasy.groweasyapi.monitoring.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

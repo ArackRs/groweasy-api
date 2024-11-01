@@ -1,7 +1,5 @@
 package com.groweasy.groweasyapi.monitoring.services;
 
-import com.groweasy.groweasyapi.loginregister.facade.AuthenticationFacade;
-import com.groweasy.groweasyapi.loginregister.model.entities.UserEntity;
 import com.groweasy.groweasyapi.monitoring.model.dto.request.SensorConfigRequest;
 import com.groweasy.groweasyapi.monitoring.model.dto.response.MetricResponse;
 import com.groweasy.groweasyapi.monitoring.model.entities.*;
